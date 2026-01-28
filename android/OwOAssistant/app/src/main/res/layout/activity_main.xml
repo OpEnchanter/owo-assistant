@@ -38,8 +38,12 @@
             android:id="@+id/save"
             android:layout_width="332dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="#00B3DB"
-            android:text="Save" />
+            android:backgroundTint="#7F7F7F"
+            android:text="Save"
+            android:textColor="#FFFFFF"
+            android:textColorLink="#FFFFFF"
+            app:strokeColor="#AFAFAF"
+            app:strokeWidth="1dp" />
 
         <Space
             android:layout_width="match_parent"
@@ -55,8 +59,12 @@
             android:id="@+id/startOverlay"
             android:layout_width="332dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="#00B3DB"
-            android:text="Test Overlay" />
+            android:backgroundTint="#7F7F7F"
+            android:text="Test Overlay"
+            android:textColor="#FFFFFF"
+            android:textColorLink="#FFFFFF"
+            app:strokeColor="#AFAFAF"
+            app:strokeWidth="1dp" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

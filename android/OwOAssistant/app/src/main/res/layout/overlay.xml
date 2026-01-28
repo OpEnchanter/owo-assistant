@@ -37,8 +37,8 @@
         <TextView
             android:id="@+id/textView"
             android:layout_width="336dp"
-            android:layout_height="95dp"
-            android:layout_marginBottom="550dp"
+            android:layout_height="222dp"
+            android:layout_marginBottom="350dp"
             android:background="#C1E9FF"
             android:gravity="center"
             android:isScrollContainer="true"
@@ -63,31 +63,42 @@
 
             <EditText
                 android:id="@+id/query"
-                android:layout_width="223dp"
-                android:layout_height="wrap_content"
+                android:layout_width="224dp"
+                android:layout_height="42dp"
+                android:background="#00FFFFFF"
                 android:ems="10"
                 android:inputType="text"
+                android:paddingLeft="24dp"
                 android:selectAllOnFocus="false"
-                android:singleLine="false" />
+                android:singleLine="false"
+                android:textColor="#FFFFFF"
+                android:textColorLink="#C8B8B8" />
 
             <Space
-                android:layout_width="32dp"
+                android:layout_width="40dp"
                 android:layout_height="0dp" />
 
             <Button
                 android:id="@+id/button"
                 android:layout_width="54dp"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#AF00FBFF"
+                android:layout_height="54dp"
+                android:backgroundTint="#AF2C2C2C"
                 android:backgroundTintMode="src_in"
                 android:insetLeft="0dp"
                 android:insetTop="0dp"
                 android:insetRight="0dp"
                 android:insetBottom="0dp"
-                android:text=">"
+                android:textColor="#FFFFFF"
+                android:textColorLink="#FFFFFF"
                 app:cornerRadius="400dp"
+                app:icon="@drawable/send"
+                app:iconGravity="textEnd"
+                app:iconPadding="4dp"
+                app:iconSize="20dp"
+                app:iconTint="#FFFFFF"
                 app:rippleColor="@color/black"
-                app:strokeWidth="0dp" />
+                app:strokeColor="#4D4D4D"
+                app:strokeWidth="1dp" />
 
         </LinearLayout>
 

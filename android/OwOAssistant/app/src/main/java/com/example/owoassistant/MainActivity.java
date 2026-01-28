@@ -13,9 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.WindowCompat;
 
 public class MainActivity extends AppCompatActivity {
-    private boolean pendingStartOverlay = false;
-
-    private static final int REQ_OVERLAY = 1234;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                     .putBoolean("debug", debugSwitch.isChecked())
                     .apply();
             save.setBackgroundTintList(ColorStateList.valueOf(0xff0aefab));
-            save.postDelayed(() -> { save.setBackgroundTintList(ColorStateList.valueOf(0xff00b3db)); }, 1500);
+            save.postDelayed(() -> { save.setBackgroundTintList(ColorStateList.valueOf(0xff7f7f7f)); }, 1500);
         });
     }
 }

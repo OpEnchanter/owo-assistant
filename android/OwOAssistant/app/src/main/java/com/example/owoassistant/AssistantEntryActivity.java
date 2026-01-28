@@ -2,20 +2,32 @@ package com.example.owoassistant;
 
 import static android.view.View.TEXT_ALIGNMENT_CENTER;
 
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okio.BufferedSink;
+
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Layout;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsAnimationCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.List;
 
 public class AssistantEntryActivity extends AppCompatActivity {
@@ -72,8 +84,11 @@ public class AssistantEntryActivity extends AppCompatActivity {
 
         View sendButton = findViewById(R.id.button);
         TextView input = findViewById(R.id.query);
-        TextView debug = findViewById(R.id.textView);
+        TextView debugView = findViewById(R.id.textView);
         TextView debugLabel = findViewById(R.id.debugLabel);
+
+        Debug debug = new Debug(debugView);
+        ServerIntegration serverIntegration = new ServerIntegration(debug, prefs.getString("backendUrl", ""));
 
         String[] hints = {
                 "Ask me anything!",
@@ -83,28 +98,24 @@ public class AssistantEntryActivity extends AppCompatActivity {
         };
         input.setHint(hints[(int) Math.round(Math.random() * (hints.length - 1))]);
 
-        debug.setTextAlignment(TEXT_ALIGNMENT_CENTER);
-        debug.setMovementMethod(new android.text.method.ScrollingMovementMethod());
+        debugView.setTextAlignment(TEXT_ALIGNMENT_CENTER);
+        debugView.setMovementMethod(new android.text.method.ScrollingMovementMethod());
 
         if (!prefs.getBoolean("debug", false)) {
-            debug.setVisibility(View.GONE);
+            debugView.setVisibility(View.GONE);
             debugLabel.setVisibility(View.GONE);
         }
 
-        debug.setText("Backend URL: " + prefs.getString("backendUrl", ""));
+        debugView.setText("Backend URL: " + prefs.getString("backendUrl", ""));
 
         sendButton.setOnClickListener(l -> {
-            writeDebug(debug, "User Inputted: " + input.getText().toString());
+            String query = input.getText().toString();
+            debug.write("User Inputted: " + query);
             input.setText("");
-        });
-    }
 
-    public void writeDebug(TextView view, String text) {
-        view.setText(view.getText() + "\n" + text);
-        Layout layout = view.getLayout();
-        if (layout == null) return;
-        int scrollAmount = layout.getLineTop(view.getLineCount()) - view.getHeight();
-        view.scrollTo(0, Math.max(scrollAmount, 0));
+            // Make HTTP request
+            new Thread(() -> { serverIntegration.postQuery(query); }).start();
+        });
     }
 
     @Override
@@ -112,4 +123,6 @@ public class AssistantEntryActivity extends AppCompatActivity {
         super.onStop();
         finish();
     }
+
+
 }
