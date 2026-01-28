@@ -1,0 +1,24 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Glow layer (bigger + translucent) -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient android:startColor="#FF0adaef" android:endColor="#FF0aefda" android:angle="-45"/> <!-- alpha glow -->
+            <corners android:radius="2000dp"/>
+            <padding
+                android:left="4dp"
+                android:top="4dp"
+                android:right="4dp"
+                android:bottom="4dp"/>
+        </shape>
+    </item>
+
+    <!-- Main box -->
+    <item android:left="0.05dp" android:top="0.05dp" android:right="0.05dp" android:bottom="0.05dp">
+        <shape android:shape="rectangle">
+            <solid android:color="#FF000000"/>
+            <corners android:radius="2000dp"/>
+        </shape>
+    </item>
+
+</layer-list>

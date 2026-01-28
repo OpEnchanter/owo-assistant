@@ -1,0 +1,24 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.OwOAssistant" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="Theme.AssistantOverlay" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+
+        <!-- Optional: keep background undimmed -->
+        <item name="android:backgroundDimEnabled">false</item>
+
+        <!-- Optional: no animation so it feels like an overlay -->
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+
+    <style name="Theme.OwOAssistant" parent="Base.Theme.OwOAssistant" />
+</resources>
