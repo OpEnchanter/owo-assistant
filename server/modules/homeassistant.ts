@@ -1,7 +1,7 @@
-const module = require("module");
+import { Module, ModuleResult } from "./module.ts"
 
-class homeassistant extends module.module {
-    public override onQuery(): module.moduleResult {
-        
+class homeassistant extends Module {
+    public override onQuery(): ModuleResult {
+        return {response: "Home assistant module activated.", endRequest: true} as ModuleResult;
     }
 }

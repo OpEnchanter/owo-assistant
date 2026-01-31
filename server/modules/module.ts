@@ -1,11 +1,11 @@
-interface moduleResult {
+export interface ModuleResult {
     endRequest: boolean,
     response: String,
 }
 
-class module {
+export class Module {
     constructor () {}
-    public onQuery(): moduleResult {
-        return {endRequest: false, response: ""} as moduleResult;
+    public onQuery(): ModuleResult {
+        return {endRequest: false, response: ""} as ModuleResult;
     }
 }
