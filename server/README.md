@@ -1,15 +1,11 @@
-# server
+| [🛖 Home](../README.md) | [🤖 Android](../android/README.md) |
+|--------------------|-------------------------|
+# owo-server
 
-To install dependencies:
+The backend server for owo assistant. The actual app! Not just the UI!
 
+### Install & run
 ```bash
 bun install
-```
-
-To run:
-
-```bash
 bun run index.ts
 ```
-
-This project was created using `bun init` in bun v1.3.6. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
