@@ -3,9 +3,9 @@ export interface ModuleResult {
     response: String,
 }
 
-export class Module {
+export class ModuleBase {
     constructor () {}
-    public onQuery(): ModuleResult {
+    public onQuery(query: String): ModuleResult {
         return {endRequest: false, response: ""} as ModuleResult;
     }
 }

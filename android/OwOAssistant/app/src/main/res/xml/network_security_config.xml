@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Allow HTTP connections to specific domains -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">example.com</domain>
+    </domain-config>
+
+    <!-- Optionally, allow HTTP traffic for all domains during testing -->
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>
