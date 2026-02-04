@@ -1,4 +1,4 @@
-import { ModuleBase,  type ModuleResult } from "./module.ts"
+import { ModuleBase,  type ModuleResult } from "owomodule"
 
 export class Module extends ModuleBase {
     constructor () {super()}

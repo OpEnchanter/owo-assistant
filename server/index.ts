@@ -1,16 +1,19 @@
 import express, { type Request, type Response } from "express";
-import { ModuleBase, type ModuleResult } from "./modules/module.ts";
+import { ModuleBase, type ModuleResult } from "owomodule";
+import { OwODB } from "owodb";
 
+// Initialize app
 const app = express();
 app.use(express.json());
 const PORT = 8080;
 
-let moduleImports = ['homeassistant.ts'];
-let modules: ModuleBase[] = [];
-
 interface RequestInterface {
     query: String,
 }
+
+// Initialize Modules
+let moduleImports = ['homeassistant.ts'];
+let modules: ModuleBase[] = [];
 
 moduleImports.forEach(async moduleName => {
     const { Module } = await import(`./modules/${moduleName}`);
@@ -18,6 +21,8 @@ moduleImports.forEach(async moduleName => {
 	console.log(`Imported module: ${moduleName}`);
 });
 
+
+// App structure
 app.get("/", (req: Request, res: Response) => {
 	res.send(`Loaded modules: ${moduleImports.toString()}`);
 });
