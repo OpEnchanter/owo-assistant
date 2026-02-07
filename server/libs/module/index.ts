@@ -11,7 +11,7 @@ export class ModuleBase {
 		this.db = db;
 	}
 
-    public onQuery(query: String): ModuleResult {
+    public async onQuery(query: String): Promise<ModuleResult> {
         return {endRequest: false, response: ""} as ModuleResult;
     }
 }

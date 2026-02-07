@@ -63,20 +63,20 @@
 
             <EditText
                 android:id="@+id/query"
-                android:layout_width="224dp"
+                android:layout_width="288dp"
                 android:layout_height="42dp"
                 android:background="#00FFFFFF"
                 android:ems="10"
                 android:inputType="text"
-                android:paddingLeft="24dp"
+                android:paddingLeft="48dp"
                 android:selectAllOnFocus="false"
                 android:singleLine="false"
                 android:textColor="#FFFFFF"
                 android:textColorLink="#C8B8B8" />
 
             <Space
-                android:layout_width="40dp"
-                android:layout_height="0dp" />
+                android:layout_width="15dp"
+                android:layout_height="wrap_content" />
 
             <Button
                 android:id="@+id/button"
@@ -94,6 +94,31 @@
                 app:icon="@drawable/send"
                 app:iconGravity="textEnd"
                 app:iconPadding="4dp"
+                app:iconSize="20dp"
+                app:iconTint="#FFFFFF"
+                app:rippleColor="@color/black"
+                app:strokeColor="#4D4D4D"
+                app:strokeWidth="1dp" />
+
+            <Button
+                android:id="@+id/speechButton"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:layout_weight="0"
+                android:backgroundTint="#2C2C2C"
+                android:backgroundTintMode="src_in"
+                android:insetLeft="0dp"
+                android:insetTop="0dp"
+                android:insetRight="0dp"
+                android:insetBottom="0dp"
+                android:textColor="#FFFFFF"
+                android:textColorLink="#FFFFFF"
+                android:translationX="-74dp"
+                android:translationY="0dp"
+                app:cornerRadius="400dp"
+                app:icon="@drawable/mic"
+                app:iconGravity="textEnd"
+                app:iconPadding="0dp"
                 app:iconSize="20dp"
                 app:iconTint="#FFFFFF"
                 app:rippleColor="@color/black"

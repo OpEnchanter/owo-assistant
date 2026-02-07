@@ -11,13 +11,16 @@ interface RequestInterface {
     query: String,
 }
 
+// Initialize DB
+const db: OwODB = new OwODB("owodb.sqlite");
+
 // Initialize Modules
 let moduleImports = ['homeassistant.ts'];
 let modules: ModuleBase[] = [];
 
 moduleImports.forEach(async moduleName => {
     const { Module } = await import(`./modules/${moduleName}`);
-	modules.push(new Module());
+	modules.push(new Module(db));
 	console.log(`Imported module: ${moduleName}`);
 });
 
@@ -27,17 +30,19 @@ app.get("/", (req: Request, res: Response) => {
 	res.send(`Loaded modules: ${moduleImports.toString()}`);
 });
 
-app.post("/query", (req: Request, res: Response) => {
+app.post("/query", async (req: Request, res: Response) => {
 	let response: String = '';
     let requestJson = req.body as RequestInterface;
-	modules.some(mod => {
-		let modres: ModuleResult = mod.onQuery(requestJson.query.toString());
+	for (const mod of modules) {
+		const modres = await mod.onQuery(requestJson.query.toString());
 		if (modres.endRequest) {
 			response = modres.response;
+			console.log(modres.response);
+			break;
 		}
-		return modres.endRequest;
-	}); 
-	res.send(`Loaded modules: ${moduleImports.toString()}`);
+	}
+	console.log(response);
+	res.send(response);
 });
 
 app.listen(PORT, () => {
