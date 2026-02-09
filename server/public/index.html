@@ -41,156 +41,20 @@
 			</form>
 		</div>
 
-		<script>
-			const moduleConfig = document.getElementById('moduleConfig');
+		<div class="card">
+			<h2>Statistics</h2>
+			<div class="fg">
+				<p id="totalQueries"></p>
+			</div>
+		
+			<div class="chartGrid">			
+				<div class="chart pie"><canvas id="cumulativeModuleRequestsChart" class="chart"></canvas></div>
+				<div class="chart"><canvas id="dailyTotalRequestsChart" class="chart"></canvas></div>
+			</div>
+			
+		</div>
 
-			const unloadedModulesSelector = document.getElementById('unloadedModules');
-
-			async function loadConfigs() {
-				await fetch('/exposedParams')
-					.then(res => {return res.json()})
-					.then(data => {
-						for (module in data) {
-							const container = document.createElement('div');
-							container.className = 'fg';
-							const moduleHeader = document.createElement('h3');
-							moduleHeader.innerText = module;
-							container.appendChild(moduleHeader);
-							Object.keys(data[module]).forEach(field => {
-								const fieldLabel = document.createElement('label');
-								fieldLabel.for = field;
-								fieldLabel.innerText = field;
-
-								const fieldInput = document.createElement('input');
-								fieldInput.type = 'text';
-								fieldInput.name = field;
-								fieldInput.id = field;
-								fieldInput.setAttribute('data-path', `${module}/${field}`);
-								fieldInput.value = data[module][field]
-
-								container.appendChild(fieldLabel);
-								container.appendChild(fieldInput);
-							});
-							moduleConfig.appendChild(container)
-						}
-
-						const submitButton = document.createElement('button');
-						submitButton.type = 'submit';
-						submitButton.innerText = 'Save';
-
-						moduleConfig.appendChild(submitButton);
-					});
-			}
-
-			async function loadModules() {
-				const loadedModules = document.getElementById('loadedModules');
-				await fetch("/loadedModules")
-					.then(data => {return data.json()})
-					.then(moduleNames => {
-						moduleNames.forEach(name => {
-							const chip = document.createElement('div');
-							chip.className = 'chip';
-
-								const left = document.createElement('div');
-								left.className = 'left';
-								left.innerText = name;
-
-								const right = document.createElement('div');
-								right.className = 'right';
-
-
-									const removeButton = document.createElement('button');
-									removeButton.className = 'remove';
-									removeButton.innerText = "x";
-									
-									removeButton.addEventListener('click', async (e) => {
-										e.preventDefault();
-										const mname = name;
-										await fetch('/removeModule', {
-											method: 'POST',
-											headers: {'Content-Type': 'application/json'},
-											body: JSON.stringify({'moduleName':mname})
-										});
-										window.location.reload();
-									});
-
-									right.appendChild(removeButton);
-	
-							chip.appendChild(left);
-							chip.appendChild(right);
-							loadedModules.appendChild(chip);
-						});
-					});
-			}
-
-			const addModuleButton = document.getElementById('addModule');
-			addModuleButton.addEventListener('click', async (e) => {
-				e.preventDefault();
-				console.log(unloadedModulesSelector.value);
-				await fetch("/loadModule", {
-					method: "POST",
-					headers: {'Content-Type': 'application/json'},
-					body: JSON.stringify({'moduleName':unloadedModulesSelector.value})
-				})
-					.then(res => {console.log(res);});
-				window.location.reload();
-			});
-
-			async function addUnloadedModules() {
-				await fetch("/unloadedModules")
-					.then(data => { return data.json() })
-					.then(json => { 
-						json.forEach(moduleName => {
-							const elem = document.createElement('option');
-							elem.value = moduleName;
-							elem.innerText = moduleName;
-
-							unloadedModulesSelector.appendChild(elem);
-						});
-						unloadedModulesSelector.placeholder = 'test';
-						unloadedModulesSelector.value = '';
-					})
-			}
-
-			moduleConfig.addEventListener('submit', async (e) => {
-				e.preventDefault();
-
-				const inputs = moduleConfig.querySelectorAll('[data-path]');
-				let data = {};
-
-				inputs.forEach(e => {
-					let pathString = e.getAttribute('data-path');
-					let paths = pathString.split('/');
-
-					if (!Object.keys(data).includes(paths[0])) {
-						data[paths[0]] = {};
-					}
-
-					data[paths[0]][paths[1]] = e.value;
-				});
-
-				await fetch('/updateConfigs', {
-					method: "POST",
-					headers: {'Content-Type': 'application/json'},
-					body: JSON.stringify(data)
-				})
-					.then(res => {
-						console.log(res);
-					});
-
-
-				console.log(data);
-			});
-
-			document.getElementById('reload').addEventListener('click', async (e) => {
-				e.preventDefault();
-				await fetch('/reloadModules');
-				
-			});
-
-			loadConfigs();
-			loadModules();
-			addUnloadedModules();
-		</script>
+		<script src="/js/pageLoader.js"></script>
+		<script type="module" src="/js/statsLoader.js"></script>
 	</body>
 </html>

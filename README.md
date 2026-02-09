@@ -1,9 +1,5 @@
-# owo - Assistant
-A digital assistant app that gives you control.
-
-Tools Used:
-- Bun
-- Android Studio
+# OwO Assistant
+> Made with ❤️ by a real human.
 
 | [💻 Server](/server/README.md) | [🤖 Android](/android/README.md) |
 |--------------------|-------------------------|

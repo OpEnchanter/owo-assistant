@@ -4,9 +4,12 @@ import { OwODB } from "owodb";
 import { readdir } from "node:fs/promises"
 import path from 'path';
 import chalk from 'chalk';
+import cron from 'node-cron';
 
 interface Statistics {
-	totalQueries: number
+	totalQueries: number,
+	requestsPerDay: Record<string, number>,
+	moduleRequests: Record<string, number>
 }
 
 // Initialize app
@@ -36,8 +39,11 @@ try {
 
 // Statistics loading
 let statistics: Statistics = {
-	totalQueries: 0
+	totalQueries: 0,
+	requestsPerDay: {},
+	moduleRequests: {},
 } as Statistics;
+
 try {
 	let statisticsData = JSON.parse(db.getGlobalData('statistics')) as Statistics;
 	if (statisticsData != null) {
@@ -56,6 +62,10 @@ async function loadModules(supressLogs: boolean) {
 
 	if (!supressLogs) {
 		console.log(`[OwO] ${chalk.green('Loading modules')}`);
+
+		if (moduleImports.length == 0) {
+			console.log(chalk.red('  No modules to load!'));
+		}
 	}
 
 	for (let moduleName of moduleImports) {
@@ -144,16 +154,33 @@ app.get("/statistics", (req: Request, res: Response) => {
 app.post("/query", async (req: Request, res: Response) => {
 	let response: String = 'Sorry, I was unable to process your request.';
     let requestJson = req.body as RequestInterface;
+	let finalModuleName = 'None'
 	for (const moduleName of Object.keys(modules)) {
 		const modres = await modules[moduleName].onQuery(requestJson.query.toString());
 		if (modres.endRequest) {
 			response = modres.response;
+			finalModuleName = moduleName;
 			break;
 		}
 	}
 
 	// Stats
 	statistics.totalQueries++;
+	let today: Date = new Date();
+	today.setDate(today.getDate());
+	today.setHours(0, 0, 0, 0);
+	if (Object.hasOwn(statistics.requestsPerDay, JSON.stringify(today))) {
+		statistics.requestsPerDay[JSON.stringify(today)]++;
+	} else {
+		statistics.requestsPerDay[JSON.stringify(today)] = 1;
+	}
+
+	if (Object.hasOwn(statistics.moduleRequests, finalModuleName)) {
+		statistics.moduleRequests[finalModuleName]++;
+	} else {
+		statistics.moduleRequests[finalModuleName] = 1;
+	}
+	
 	db.setGlobalData('statistics', JSON.stringify(statistics));
 
 	res.send(response);

@@ -159,3 +159,26 @@ div.fg label {
 	margin-left: 30px;
 	margin-bottom: 4px;
 }
+
+.chartGrid {
+	display: grid;
+	grid-template-columns: 2;
+	grid-template-rows: 2;
+	min-width: 0px;
+}
+
+.chart {
+	display: flex;
+	min-width: 0px;
+	height: 450px;
+	width: 100%;
+	margin-bottom: 20px;
+	justify-content: center;
+}
+
+.chart.pie {
+	align-items: center;
+	justify-content: center;
+	margin-top: 30px;
+	height: 250px;
+}
