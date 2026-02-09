@@ -5,6 +5,10 @@ import { readdir } from "node:fs/promises"
 import path from 'path';
 import chalk from 'chalk';
 
+interface Statistics {
+	totalQueries: number
+}
+
 // Initialize app
 const app = express();
 app.use(express.json());
@@ -20,9 +24,29 @@ const db: OwODB = new OwODB("owodb.sqlite");
 
 // Initialize Modules
 let moduleImports: string[] = [];
-let data = JSON.parse(db.getGlobalData('moduleOrder'));
-if (data != null) {
-	moduleImports = data;
+try {
+	let data = JSON.parse(db.getGlobalData('moduleOrder'));
+	if (data != null) {
+		moduleImports = data;
+	}
+} catch {
+	db.setGlobalData('moduleOrder', JSON.stringify([]));
+}
+
+
+// Statistics loading
+let statistics: Statistics = {
+	totalQueries: 0
+} as Statistics;
+try {
+	let statisticsData = JSON.parse(db.getGlobalData('statistics')) as Statistics;
+	if (statisticsData != null) {
+		statistics = statisticsData;
+	} else {
+		db.setGlobalData('statistics', JSON.stringify(statistics));
+	}
+} catch {
+	db.setGlobalData('statistics', JSON.stringify(statistics));
 }
 
 let modules: { [ key: string ]: ModuleBase } = {};
@@ -113,6 +137,10 @@ app.post("/updateConfigs", (req: Request, res: Response) => {
 	res.sendStatus(200);
 });
 
+app.get("/statistics", (req: Request, res: Response) => {
+	res.send(statistics);
+});
+
 app.post("/query", async (req: Request, res: Response) => {
 	let response: String = 'Sorry, I was unable to process your request.';
     let requestJson = req.body as RequestInterface;
@@ -123,6 +151,11 @@ app.post("/query", async (req: Request, res: Response) => {
 			break;
 		}
 	}
+
+	// Stats
+	statistics.totalQueries++;
+	db.setGlobalData('statistics', JSON.stringify(statistics));
+
 	res.send(response);
 });
 
