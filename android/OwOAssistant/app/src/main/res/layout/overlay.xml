@@ -8,8 +8,34 @@
     android:backgroundTintMode="add"
     tools:context=".MainActivity">
 
+    <TextView
+        android:id="@+id/debugLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Debug"
+        android:textSize="20sp"
+        android:translationY="75dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/debug"
+        android:layout_width="336dp"
+        android:layout_height="222dp"
+        android:layout_marginStart="32dp"
+        android:background="#C1E9FF"
+        android:gravity="center"
+        android:isScrollContainer="true"
+        android:scrollbarSize="10dp"
+        android:scrollbars="vertical"
+        android:textColor="#000000"
+        android:translationY="100dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
-        android:id="@+id/backdrop"
+        android:id="@+id/userInteraction"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="bottom|center"
@@ -26,29 +52,32 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <TextView
-            android:id="@+id/debugLabel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="Debug"
-            android:textSize="20sp" />
+        <LinearLayout
+            android:id="@+id/responseWindow"
+            android:layout_width="363dp"
+            android:layout_height="300dp"
+            android:background="@drawable/response_background"
+            android:orientation="vertical"
+            android:textAlignment="center"
+            android:translationY="40dp">
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="336dp"
-            android:layout_height="222dp"
-            android:layout_marginBottom="350dp"
-            android:background="#C1E9FF"
-            android:gravity="center"
-            android:isScrollContainer="true"
-            android:scrollbarSize="10dp"
-            android:scrollbars="vertical"
-            android:textColor="#000000"
-            app:layout_constraintBottom_toTopOf="@+id/userInteraction" />
+            <TextView
+                android:id="@+id/response"
+                android:layout_width="match_parent"
+                android:layout_height="253dp"
+                android:fadeScrollbars="false"
+                android:paddingLeft="28dp"
+                android:paddingTop="20dp"
+                android:paddingRight="28dp"
+                android:scrollbars="vertical"
+                android:scrollHorizontally="false"
+                android:text="hello world!"
+                android:textColor="#C5C5C5"
+                android:textSize="16sp" />
+        </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/userInteraction"
+            android:id="@+id/inputArea"
             android:layout_width="363dp"
             android:layout_height="89dp"
             android:layout_marginStart="24dp"

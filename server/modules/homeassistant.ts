@@ -1,5 +1,6 @@
 import { ModuleBase,  type ModuleResult } from "owomodule"
 import { OwODB } from "owodb";
+import chalk from 'chalk';
 
 type LightAction = (entityId: string, subaction: string, value: string) => Promise<any>;
 
@@ -9,30 +10,36 @@ interface SmartHomeActions {
 
 interface HAState {
   entity_id: string;
-  state: string; // "on", "off", "unavailable", "22.5", etc.
+  state: string;
   attributes: {
     friendly_name?: string;
     brightness?: number;
     rgb_color?: [number, number, number];
     unit_of_measurement?: string;
-    [key: string]: any; // Catch-all for integration-specific attributes
+    [key: string]: any;
   };
-  last_changed: string; // ISO 8601 Timestamp
-  last_updated: string; // ISO 8601 Timestamp
+  last_changed: string;
+  last_updated: string;
+}
+
+interface ModuleData {
+	hatoken: string,
+	haurl: string
 }
 
 export class Module extends ModuleBase {
     constructor (db: OwODB) { super(db) }
 
-    private token = "";
-    private haUrl = ""
-
     private async haFetchDevices() {
+		const moduleData = this.db.getModuleData("homeassistant.ts") as ModuleData;
+		const token = moduleData.hatoken;
+		const haUrl = moduleData.haurl;
+
         const res = await fetch(
-            `${this.haUrl}/api/states`,
+            `${haUrl}/api/states`,
             {
                 headers: {
-                    'Authorization': `Bearer ${this.token}`,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             }
@@ -49,12 +56,15 @@ export class Module extends ModuleBase {
     }
 
     private async haPost(bodyJson: Object, endpoint: string) {
+		const moduleData = this.db.getModuleData("homeassistant.ts") as ModuleData;
+		const token = moduleData.hatoken;
+		const haUrl = moduleData.haurl;
         let res = await fetch(
-            `${this.haUrl}${endpoint}`,
+            `${haUrl}${endpoint}`,
             {
                 method: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${this.token}`,
+                    'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(bodyJson)
@@ -63,8 +73,28 @@ export class Module extends ModuleBase {
 
         return res;
     }
+	
+	public override exposedParams(): string[] {
+		const exParams = [ 'haurl', 'hatoken' ];
+		return exParams;
+	}
 
     public override async onQuery(query: String): Promise<ModuleResult> {
+        const moduleData = this.db.getModuleData("homeassistant.ts") as ModuleData;
+		const token = moduleData.hatoken;
+		const haUrl = moduleData.haurl;
+
+        if (token == '') {
+            console.log(`[Home Assistant] [${chalk.red('ERROR')}] ${chalk.bgRed(' NO HA TOKEN ')}`);
+            return {response: 'You have no Home Assistant token set!', endRequest: true};
+        }
+
+        if (haUrl == '') {
+            console.log(`[Home Assistant] [${chalk.red('ERROR')}] ${chalk.bgRed(' NO HA URL ')}`);
+            return {response: 'You have no Home Assistant URL set!', endRequest: true};
+        }
+
+
         const attribMap: Record<string, string> = {
             'color': 'rgb_color',
             'temperature': 'kelvin',
@@ -174,15 +204,22 @@ export class Module extends ModuleBase {
                     actions[actionName](entityId, subaction, value);
                 }
 
-                response = `
-Home Assistant Integration:
--- Entity Name: ${entityName}
--- Entity ID: ${entityId}
--- Action: ${completeActionName}
-                `;
+                if (actionName == 'turn on') {
+                    response = `Turned on ${entityName}!`
+                } else if (actionName == 'turn off') {
+                    response = `Turned off ${entityName}!`
+                } else {
+                    response = 'Ok!'
+                }
+
+                if (entityId) {
+                    return {response: response, endRequest: isHACommand} as ModuleResult;
+                }
+
                 
-                return {response: response, endRequest: isHACommand} as ModuleResult;
             }
         }
+
+        return {response: "", endRequest: false} as ModuleResult;
     }
 }

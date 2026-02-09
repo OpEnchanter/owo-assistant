@@ -2,16 +2,7 @@ package com.example.owoassistant;
 
 import static android.view.View.TEXT_ALIGNMENT_CENTER;
 
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import okio.BufferedSink;
-
 import android.Manifest;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
@@ -20,29 +11,20 @@ import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import android.text.Layout;
-import android.util.Log;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContract;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsAnimationCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class AssistantEntryActivity extends AppCompatActivity {
 
@@ -103,14 +85,14 @@ public class AssistantEntryActivity extends AppCompatActivity {
         userInputContainer.setOnClickListener(l -> {
         });
 
-        View backdrop = findViewById(R.id.backdrop);
+        View backdrop = findViewById(R.id.userInteraction);
         backdrop.setOnClickListener(l -> {
             finish();
         });
 
         View sendButton = findViewById(R.id.button);
         TextView input = findViewById(R.id.query);
-        TextView debugView = findViewById(R.id.textView);
+        TextView debugView = findViewById(R.id.debug);
         TextView debugLabel = findViewById(R.id.debugLabel);
 
         Debug debug = new Debug(debugView);
@@ -134,6 +116,12 @@ public class AssistantEntryActivity extends AppCompatActivity {
 
         debugView.setText("Backend URL: " + prefs.getString("backendUrl", ""));
 
+        TextView responseView = findViewById(R.id.response);
+        View responseWindow = findViewById(R.id.responseWindow);
+        responseWindow.setScaleY(0f);
+        responseWindow.setTranslationY(density * (273/2));
+        debugView.setMovementMethod(new ScrollingMovementMethod());
+
         sendButton.setOnClickListener(l -> {
             String query = input.getText().toString();
             debug.write("User Inputted: " + query);
@@ -141,7 +129,7 @@ public class AssistantEntryActivity extends AppCompatActivity {
 
             // Make HTTP request
             new Thread(() -> {
-                serverIntegration.postQuery(query);
+                serverIntegration.postQuery(query, responseView, responseWindow);
             }).start();
         });
 
@@ -161,7 +149,7 @@ public class AssistantEntryActivity extends AppCompatActivity {
 
                 // Make HTTP request
                 new Thread(() -> {
-                    serverIntegration.postQuery(query);
+                    serverIntegration.postQuery(query, responseView, responseWindow);
                 }).start();
 
                 permissionLauncher.launch(Manifest.permission.RECORD_AUDIO);

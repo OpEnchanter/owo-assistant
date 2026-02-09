@@ -1,9 +1,14 @@
 package com.example.owoassistant;
 
+import android.animation.TimeInterpolator;
 import android.util.Log;
+import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
 
 import org.json.JSONObject;
+
+import java.time.Duration;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -17,12 +22,16 @@ public class ServerIntegration {
     private String server;
 
     public ServerIntegration(Debug debug, String server) {
-        client = new OkHttpClient();
+        client = new OkHttpClient.Builder()
+                .connectTimeout(Duration.ofMillis(1500))
+                .readTimeout(Duration.ofMinutes(2))
+                .writeTimeout(Duration.ofMillis(1000))
+                .build();
         this.debug = debug;
         this.server = server;
     }
 
-    public void postQuery(String query) {
+    public void postQuery(String query, TextView responseView, View responseWindow) {
         JSONObject bodyJson = new JSONObject();
         try {
             bodyJson.put("query", query);
@@ -43,7 +52,15 @@ public class ServerIntegration {
             if (!response.isSuccessful()) {
                 debug.write("Error: Request to server failed; " + response.code());
             }
-            debug.write(response.body().string());
+
+            responseView.setText(response.body().string());
+            responseView.getLineCount();
+            responseWindow.animate()
+                    .scaleY(1f)
+                    .translationY(160f)
+                    .setDuration(150);
+
+
         } catch (Exception e) {
             debug.write("Error: Request to server failed; " + Log.getStackTraceString(e));
             e.printStackTrace();

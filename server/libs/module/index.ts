@@ -6,9 +6,13 @@ export interface ModuleResult {
 }
 
 export class ModuleBase {
-	private db: OwODB;
+	public db: OwODB;
     constructor (db: OwODB) {
 		this.db = db;
+	}
+
+	public exposedParams(): string[] {
+		return [];
 	}
 
     public async onQuery(query: String): Promise<ModuleResult> {
