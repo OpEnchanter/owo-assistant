@@ -11,8 +11,9 @@ git clone https://github.com/OpEnchanter/owo-assistant.git; cd owo-assistant/ser
 ```
 
 ### Containerized installation
-Running the server in Docker is relatively simple, copy the YAML below into a new `docker-compose.yml` file and run `docker compose up -d`.
+Running the server in Docker is relatively simple, copy the YAML below into a new `docker-compose.yml` file and run `docker compose up -d` *or* run the provided command for downloading and running the docker compose *or* use the `docker run` command below.
 
+**Docker Compose**
 ```yaml
 services:
   owo-assistant:
@@ -22,6 +23,14 @@ services:
       - "./data:/usr/src/app/data"
     ports:
       - "8080:8080"
+```
+```bash
+curl -O https://raw.githubusercontent.com/OpEnchanter/owo-assistant/refs/heads/main/server/docker-compose.yml; docker compose up -d
+```
+
+**Docker Run**
+```bash
+docker run -d -p 8080:8080 --name owo-assistant ghcr.io/openchanter/owo-assistant:latest
 ```
 
 ## Client Installation
