@@ -1,0 +1,8 @@
+services:
+  owo-assistant:
+    container_name: owo-assistant
+    image: owo-assistant
+    volumes:
+      - "./data:/usr/src/app/data"
+    ports:
+      - "8080:8080"

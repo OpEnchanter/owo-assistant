@@ -15,7 +15,7 @@ interface Statistics {
 }
 
 // Initialize DB
-const db: OwODB = new OwODB("owodb.sqlite");
+const db: OwODB = new OwODB("./data/owodb.sqlite");
 
 // Initialize app
 let sessionSecret = '';

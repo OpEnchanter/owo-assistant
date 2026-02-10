@@ -2,7 +2,7 @@
 
 ## Server Installation
 > [!NOTE]
-> The fastest way to get the server up is with docker, to serve the app with docker, first ensure you have docker installed on your machine then, either use the provided docker compose or `docker run`, both detailed below.
+> The fastest way to get the server up is with docker, to serve the app with docker, first ensure you have docker installed on your machine then, either use the provided `docker compose` or `docker run`, both detailed below.
 
 ### Non-containerized installation
 To install and run the app without using a containerization system such as docker, you must clone the github repository, navigate to the relevant files and run the bun app. This can be done with the following command.
@@ -11,7 +11,18 @@ git clone https://github.com/OpEnchanter/owo-assistant.git; cd owo-assistant/ser
 ```
 
 ### Containerized installation
-🚧 Sorry! Not completed yet! 🚧
+Running the server in Docker is relatively simple, copy the YAML below into a new `docker-compose.yml` file and run `docker compose up -d`.
+
+```yaml
+services:
+  owo-assistant:
+    container_name: owo-assistant
+    image: owo-assistant
+    volumes:
+      - "./data:/usr/src/app/data"
+    ports:
+      - "8080:8080"
+```
 
 ## Client Installation
 The prebuilt `.apk` binary for the app is in releases, from which you can download it and load it onto your phone.
