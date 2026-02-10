@@ -54,7 +54,38 @@
 			
 		</div>
 
+		<div class="card">
+			<h2>API</h2>
+			<button id="resetApiKey">Reset API Key</button>
+		</div>
+
+		<div class="modal" id="newApiKeyModal" style="height:100px; width: 65vw; visibility: hidden;">
+			<h3>New API Key</h3>
+			<p class="fg" style="margin:5px; overflow-x: scroll;" id="apiKey"></p>
+			<button id="close" style="margin:0px">Done</button>
+		</div>
+
 		<script src="/js/pageLoader.js"></script>
 		<script type="module" src="/js/statsLoader.js"></script>
+
+		<script>
+			const closeButton = document.getElementById("close");
+			const modal = document.getElementById("newApiKeyModal");
+			closeButton.addEventListener('click', (e) => {
+				modal.style.visibility = 'hidden';
+			});
+
+			const resetApiKeyButton = document.getElementById('resetApiKey');
+			const apiKey = document.getElementById('apiKey');
+			resetApiKeyButton.addEventListener('click', async (e) => {
+				await fetch('/resetApiKey')
+					.then(data => {return data.text();})
+					.then(newKey => {
+						apiKey.innerText = newKey;
+						modal.style.visibility = 'visible';
+						console.log(newKey);
+					});
+			});
+		</script>
 	</body>
 </html>

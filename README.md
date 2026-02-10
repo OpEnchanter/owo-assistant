@@ -16,9 +16,17 @@ git clone https://github.com/OpEnchanter/owo-assistant.git; cd owo-assistant/ser
 ## Client Installation
 The prebuilt `.apk` binary for the app is in releases, from which you can download it and load it onto your phone.
 
+**Post install steps**
+1. Get server URL with `/query` appended to it (ex. http://localhost/query) and enter it into the URL input.
+2. Get a new API key from the admin dashboard (Scroll down to API and click `Reset API Key`) and enter it into the API key input.
+3. Test! Tap `Test Overlay` and try sending a request to the server!
+
 ## API
 > [!NOTE]
 > Basic frontend applications only need to interact with the /query endpoint!
+
+> [!NOTE]
+> All API requests require an `x-api-key` header with your API key!
 
 ### Endpoints
 - **/query** (POST) `{query: string}` - Default endpoint for assistant queries. Returns the response as a string.

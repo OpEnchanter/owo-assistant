@@ -20,8 +20,9 @@ public class ServerIntegration {
     private Debug debug;
     private OkHttpClient client;
     private String server;
+    private String apiKey;
 
-    public ServerIntegration(Debug debug, String server) {
+    public ServerIntegration(Debug debug, String server, String apiKey) {
         client = new OkHttpClient.Builder()
                 .connectTimeout(Duration.ofMillis(1500))
                 .readTimeout(Duration.ofMinutes(2))
@@ -29,6 +30,7 @@ public class ServerIntegration {
                 .build();
         this.debug = debug;
         this.server = server;
+        this.apiKey = apiKey;
     }
 
     public void postQuery(String query, TextView responseView, View responseWindow) {
@@ -45,6 +47,7 @@ public class ServerIntegration {
 
         Request request = new Request.Builder()
                 .url(server)
+                .addHeader("x-api-key", apiKey)
                 .post(body)
                 .build();
 

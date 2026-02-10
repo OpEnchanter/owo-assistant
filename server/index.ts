@@ -1,10 +1,12 @@
-import express, { type Request, type Response } from "express";
+import express, { type NextFunction, type Request, type Response } from "express";
 import { ModuleBase, type ModuleResult } from "owomodule";
 import { OwODB } from "owodb";
 import { readdir } from "node:fs/promises"
 import path from 'path';
 import chalk from 'chalk';
-import cron from 'node-cron';
+import session from 'express-session';
+import * as crypto from 'crypto';
+import { password } from "bun";
 
 interface Statistics {
 	totalQueries: number,
@@ -12,18 +14,50 @@ interface Statistics {
 	moduleRequests: Record<string, number>
 }
 
+// Initialize DB
+const db: OwODB = new OwODB("owodb.sqlite");
+
 // Initialize app
+let sessionSecret = '';
+try {
+	sessionSecret = db.getGlobalData('sessionSecret');
+} catch {
+	sessionSecret = crypto.randomBytes(32).toString('base64');
+	db.setGlobalData('sessionSecret', sessionSecret);
+}
+
+let apiKey = '';
+try {
+	apiKey = db.getGlobalData('apiKey');
+} catch {
+	apiKey = Bun.CryptoHasher.hash('sha256', crypto.randomBytes(64).toString('base64')).toString('hex');
+	db.setGlobalData('apiKey', apiKey);
+}
+
+let appInitialized = false;
+try {
+	appInitialized = JSON.parse(db.getGlobalData('appInitialized'));
+} catch {}
+
 const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'static')));
+app.use(express.urlencoded({ extended: true }));
+app.use(session({
+	secret: sessionSecret,
+	resave: false,
+	saveUninitialized: false,
+	cookie: {
+		maxAge: 1000 * 60 * 60 * 24 * 7 * 2, // 2 Weeks
+		secure: false
+	}
+}));
+
 const PORT = 8080;
 
 interface RequestInterface {
     query: String,
 }
-
-// Initialize DB
-const db: OwODB = new OwODB("owodb.sqlite");
 
 // Initialize Modules
 let moduleImports: string[] = [];
@@ -79,7 +113,81 @@ async function loadModules(supressLogs: boolean) {
 	db.setGlobalData('moduleOrder', JSON.stringify(moduleImports));
 }
 
-// App structure
+const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+	let requestKey = req.headers['x-api-key'];
+	if (requestKey === undefined) {
+		requestKey = ''
+	}
+	const requestKeyHashed = Bun.CryptoHasher.hash('sha256', requestKey as string).toString('hex');
+
+	if (!appInitialized) {
+		res.redirect('/newInstance');
+	} else {
+		if (requestKeyHashed === apiKey || req.session.authenticated) {
+			next();
+		} else {
+			res.redirect('/login');
+		}
+	}	
+};
+
+app.get("/login", (req: Request, res: Response) => {
+	if (!appInitialized) { res.redirect('/newInstance'); } else {
+		if (req.session.authenticated) {
+			res.redirect('/');
+		} else {
+			res.sendFile(path.join(__dirname, 'public', 'login.html'))
+		}	
+	}
+});
+
+app.post("/login", async (req: Request, res: Response) => {
+	const credentials = req.body;
+	const adminCredentials = JSON.parse(db.getGlobalData('adminCreds'));
+
+	if (credentials.username === adminCredentials.username && await Bun.password.verify(credentials.password, adminCredentials.password)) {
+		req.session.authenticated = true;
+		res.redirect('/');
+	}
+});
+
+app.get("/resetApiKey", (req: Request, res: Response) => {
+	const newKey = crypto.randomBytes(64).toString('base64');
+	apiKey = Bun.CryptoHasher.hash('sha256', newKey).toString('hex');
+	db.setGlobalData('apiKey', apiKey);
+	res.send(newKey);
+});
+
+app.get("/newInstance", (req: Request, res: Response) => {
+	if (appInitialized) { res.redirect('/login'); } else {
+		res.sendFile(path.join(__dirname, 'public', 'newInstance.html'))
+	}
+});
+
+app.post("/newInstance", async (req: Request, res: Response) => {
+	const credentials = req.body;
+	if (credentials.username !== '' && credentials.password !== '') {
+		const credsHashed = {
+			username: credentials.username,
+			password: await Bun.password.hash(credentials.password)
+		};
+		db.setGlobalData('adminCreds', JSON.stringify(credsHashed))
+		req.session.authenticated = true;
+
+		appInitialized = true;
+		db.setGlobalData('appInitialized', JSON.stringify(appInitialized));
+
+		res.redirect('/');
+	}
+});
+
+app.use(authMiddleware);
+
+// API Endpoints
+app.get("/logout", (req: Request, res: Response) => {
+	req.session.destroy((err) => {req.session.authenticated = false});
+});
+
 app.get("/", (req: Request, res: Response) => {
 	res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });

@@ -96,7 +96,7 @@ public class AssistantEntryActivity extends AppCompatActivity {
         TextView debugLabel = findViewById(R.id.debugLabel);
 
         Debug debug = new Debug(debugView);
-        ServerIntegration serverIntegration = new ServerIntegration(debug, prefs.getString("backendUrl", ""));
+        ServerIntegration serverIntegration = new ServerIntegration(debug, prefs.getString("backendUrl", ""), prefs.getString("apiKey", ""));
 
         String[] hints = {
                 "Ask me anything!",

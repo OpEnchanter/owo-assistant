@@ -182,3 +182,29 @@ div.fg label {
 	margin-top: 30px;
 	height: 250px;
 }
+
+.modal {
+	width: 25vw;
+	height: 25vh;
+
+	display: block;
+	position: fixed;
+
+	align-items: center;
+	justify-content: center;
+
+	top: 50vh;
+	left: 50vw;
+
+	transform: translate(-50%, -50%);
+
+	border: 1px solid var(--border);
+	border-radius: var(--br-med);
+	padding: 10px;
+
+	background: var(--foreground);
+}
+
+.modal form * {
+	margin: 5px;
+}

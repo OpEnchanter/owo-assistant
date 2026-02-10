@@ -46,12 +46,15 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(this, AssistantEntryActivity.class));
         });
 
+        TextView apiKey = findViewById(R.id.apiKey);
+
 
         Button save = findViewById(R.id.save);
         save.setOnClickListener(v -> {
             getSharedPreferences("owo", MODE_PRIVATE)
                     .edit()
                     .putString("backendUrl", backendUrlInput.getText().toString())
+                    .putString("apiKey", apiKey.getText().toString())
                     .putBoolean("debug", debugSwitch.isChecked())
                     .apply();
             save.setBackgroundTintList(ColorStateList.valueOf(0xff0aefab));

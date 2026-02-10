@@ -31,8 +31,16 @@
             android:layout_width="332dp"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Backend URL"
+            android:hint="Backend URL (http://127.0.0.1/query)"
             android:inputType="text" />
+
+        <EditText
+            android:id="@+id/apiKey"
+            android:layout_width="332dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="API Key"
+            android:inputType="textPassword" />
 
         <Button
             android:id="@+id/save"
