@@ -17,7 +17,7 @@ Running the server in Docker is relatively simple, copy the YAML below into a ne
 services:
   owo-assistant:
     container_name: owo-assistant
-    image: owo-assistant
+    image: ghcr.io/openchanter/owo-assistant:latest
     volumes:
       - "./data:/usr/src/app/data"
     ports:
