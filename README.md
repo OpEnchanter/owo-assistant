@@ -110,7 +110,7 @@ export class Module extends ModuleBase {
 OwODB is a wrapper that abstracts useful tools for creating modules, and storing related data.
 
 **Functions**
-- **getModuleData(moduleName: string)** - Fetches the stored data for a given module and returns it as an `Object`.
+- **getModuleData(moduleName: string, shape?: string[])** - Fetches the stored data for a given module and returns it as an `Object`. The `shape` argument defines the specific that should be enforced on the returned data (create empty strings for values that are not present in the data).
 - **setModuleData(moduleName: string, data: Object)** - Sets the stored data for a given module to an `Object`.
 
 ## OwOModule

@@ -185,7 +185,7 @@ div.fg label {
 
 .modal {
 	width: 25vw;
-	height: 25vh;
+	
 
 	display: block;
 	position: fixed;
@@ -207,4 +207,45 @@ div.fg label {
 
 .modal form * {
 	margin: 5px;
+}
+
+.modal .fg#apiKey {
+	overflow-y: hidden;
+	overflow-x: scroll;
+	text-wrap: none;
+	height: 16px;
+}
+
+@media (max-width: 1080px) {
+	.modal.login {
+		transform: translate(-50%, -50%) scale(2);
+		max-width: 75vw;
+	}
+
+	button {
+		height: 50px;
+		border-radius: var(--br-large);
+		font-size: 18px;
+	}
+
+	input {
+		height: 50px;
+		border-radius: var(--br-large);
+		font-size: 24px;
+	}
+
+	select {
+		height: 50px;
+		border-radius: var(--br-large);
+		font-size: 18px;
+	}
+
+	h1 {
+		font-size: 48px;
+	}
+
+	h2 {
+		font-size: 32px;
+	}
+
 }

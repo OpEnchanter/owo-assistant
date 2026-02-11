@@ -138,12 +138,6 @@ moduleConfig.addEventListener('submit', async (e) => {
     console.log(data);
 });
 
-document.getElementById('reload').addEventListener('click', async (e) => {
-    e.preventDefault();
-    await fetch('/reloadModules');
-    
-});
-
 loadConfigs();
 loadModules();
 addUnloadedModules();

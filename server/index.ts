@@ -4,7 +4,7 @@ import { OwODB } from "owodb";
 import { readdir } from "node:fs/promises"
 import path from 'path';
 import chalk from 'chalk';
-import session from 'express-session';
+import session, { type SessionData } from 'express-session';
 import * as crypto from 'crypto';
 import { password } from "bun";
 
@@ -12,6 +12,10 @@ interface Statistics {
 	totalQueries: number,
 	requestsPerDay: Record<string, number>,
 	moduleRequests: Record<string, number>
+}
+
+interface CustomSessionData extends SessionData {
+	authenticated?: boolean
 }
 
 // Initialize DB
@@ -123,7 +127,7 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
 	if (!appInitialized) {
 		res.redirect('/newInstance');
 	} else {
-		if (requestKeyHashed === apiKey || req.session.authenticated) {
+		if (requestKeyHashed === apiKey || (req.session as CustomSessionData).authenticated) {
 			next();
 		} else {
 			res.redirect('/login');
@@ -133,7 +137,7 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
 
 app.get("/login", (req: Request, res: Response) => {
 	if (!appInitialized) { res.redirect('/newInstance'); } else {
-		if (req.session.authenticated) {
+		if ((req.session as CustomSessionData).authenticated) {
 			res.redirect('/');
 		} else {
 			res.sendFile(path.join(__dirname, 'public', 'login.html'))
@@ -146,7 +150,7 @@ app.post("/login", async (req: Request, res: Response) => {
 	const adminCredentials = JSON.parse(db.getGlobalData('adminCreds'));
 
 	if (credentials.username === adminCredentials.username && await Bun.password.verify(credentials.password, adminCredentials.password)) {
-		req.session.authenticated = true;
+		(req.session as CustomSessionData).authenticated = true;
 		res.redirect('/');
 	}
 });
@@ -171,8 +175,8 @@ app.post("/newInstance", async (req: Request, res: Response) => {
 			username: credentials.username,
 			password: await Bun.password.hash(credentials.password)
 		};
-		db.setGlobalData('adminCreds', JSON.stringify(credsHashed))
-		req.session.authenticated = true;
+		db.setGlobalData('adminCreds', JSON.stringify(credsHashed));
+		(req.session as CustomSessionData).authenticated = true;
 
 		appInitialized = true;
 		db.setGlobalData('appInitialized', JSON.stringify(appInitialized));
@@ -185,7 +189,7 @@ app.use(authMiddleware);
 
 // API Endpoints
 app.get("/logout", (req: Request, res: Response) => {
-	req.session.destroy((err) => {req.session.authenticated = false});
+	req.session.destroy((err) => {(req.session as CustomSessionData).authenticated = false});
 });
 
 app.get("/", (req: Request, res: Response) => {
