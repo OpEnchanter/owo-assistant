@@ -27,6 +27,8 @@ services:
 ```bash
 curl -O https://raw.githubusercontent.com/OpEnchanter/owo-assistant/refs/heads/main/server/docker-compose.yml; docker compose up -d
 ```
+> [!WARNING]
+> The container started with the provided `docker run` command is ephemeral, and the database is deleted when it is stopped.
 
 **Docker Run**
 ```bash
