@@ -6,6 +6,6 @@ const db = new OwODB('owodb.sqlite');
 
 const hamod = new Module(db);
 
-const res = await hamod.onQuery("set Tristan's lamp temperature 500");
+const res = await hamod.onQuery("set home lab lamp temperature 15");
 
 console.log(res);

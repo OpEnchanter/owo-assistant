@@ -89,7 +89,7 @@ try {
 	db.setGlobalData('statistics', JSON.stringify(statistics));
 }
 
-let modules: { [ key: string ]: ModuleBase } = {};
+let modules: Record<string, ModuleBase> = {};
 
 async function loadModules(supressLogs: boolean) {
 	modules = {};
@@ -206,12 +206,14 @@ app.get("/exposedParams", (req: Request, res: Response) => {
 	Object.keys(modules).forEach(moduleName => {
 		data[moduleName] = {};
 		const moduleData: Object = db.getModuleData(moduleName);
-		modules[moduleName].exposedParams().forEach(param => {
-			data[moduleName][param] = '';
-			if (moduleData != null) {
-				data[moduleName][param] = moduleData[param];
-			}
-		});
+		if (Object.hasOwn(modules, moduleName)) {
+			modules[moduleName].exposedParams().forEach(param => {
+				data[moduleName][param] = '';
+				if (moduleData != null) {
+					data[moduleName][param] = moduleData[param];
+				}
+			});
+		}
 	});
 	res.send(JSON.stringify(data));
 });

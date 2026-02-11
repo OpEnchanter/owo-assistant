@@ -1,4 +1,13 @@
 import { Database } from "bun:sqlite";
+import type { Interface } from "node:readline";
+
+interface ModuleDataResult {
+	data: string
+}
+
+interface SystemDataResult {
+	value: string
+}
 
 export class OwODB {
 	private db: Database;
@@ -18,12 +27,20 @@ export class OwODB {
 
 	}
 
-	public getModuleData(moduleName: string): Object {
+	public getModuleData(moduleName: string, shape?: string[]): Object {
 		const query = this.db.prepare("SELECT data FROM module_data WHERE name = ?");
-		let data = null
+		let data = {} as Record<string, string>;
 		try {
-			data = JSON.parse(query.get(moduleName).data);
+			data = JSON.parse((query.get(moduleName) as ModuleDataResult).data);
 		} catch {}
+
+		if (shape) {
+			shape.forEach((arg) => {
+				if (!Object.hasOwn(data, arg)) {
+					data[arg] = '';
+				}
+			});
+		}
 
 		return data;
 	}
@@ -40,7 +57,11 @@ export class OwODB {
 
 	public getGlobalData(key: string): string {
 		const query = this.db.prepare("SELECT value FROM global_data WHERE key = ?");
-		let data = query.get(key).value;
+		let data = '';
+		try {
+			data = (query.get(key) as SystemDataResult).value;
+		} catch {}
+		
 		return data as string;
 	}
 }

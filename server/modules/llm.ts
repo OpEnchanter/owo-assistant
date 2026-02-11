@@ -27,25 +27,20 @@ export class Module extends ModuleBase {
 	}
 
 	public override async onQuery(query: String): Promise<ModuleResult> {
-		const moduleData = this.db.getModuleData('llm.ts') as ModuleData;
-		const ollamaUrl = moduleData.ollamaUrl;
-		const openAIApiKey = moduleData.ollamaUrl;
-		const anthropicApiKey = moduleData.anthropicApiKey;
-		const modelId = moduleData.modelId;
-		const systemPrompt = moduleData.systemPrompt;
+		const moduleData = this.db.getModuleData('llm.ts', ['ollamaUrl', 'openAIApiKey', 'anthropicApiKey', 'modelId', 'systemPrompt']) as ModuleData;
 
 		let response = ''
 
-		if (ollamaUrl != '') {
+		if (moduleData.ollamaUrl != '') {
 			console.log(`[LLM] ${chalk.green('Making request to Ollama')}`);
-			const res = await fetch(`${ollamaUrl}/api/generate`, {
+			const res = await fetch(`${moduleData.ollamaUrl}/api/generate`, {
 				method: 'POST',
 				headers: {'Content-Type': 'application/json'},
 				body: JSON.stringify({
-						model:modelId, 
+						model: moduleData.modelId, 
 						prompt: query, 
 						stream: false,
-						system: systemPrompt
+						system: moduleData.systemPrompt
 					})
 			})
 			
@@ -53,10 +48,10 @@ export class Module extends ModuleBase {
 			response = data.response;
 
 			return {response: response, endRequest: true} as ModuleResult;
-		} else if (openAIApiKey != '') {
+		} else if (moduleData.openAIApiKey != '') {
 			console.log(`[LLM] ${chalk.green('Making request to OpenAI')}`);
 
-		} else if (anthropicApiKey != '') {
+		} else if (moduleData.anthropicApiKey != '') {
 			console.log(`[LLM] ${chalk.green('Making request to Anthropic')}`);
 
 		} else {

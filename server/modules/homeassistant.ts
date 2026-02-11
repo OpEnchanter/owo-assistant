@@ -80,10 +80,10 @@ export class Module extends ModuleBase {
 	}
 
     public override async onQuery(query: String): Promise<ModuleResult> {
-        const moduleData = this.db.getModuleData("homeassistant.ts") as ModuleData;
-		const token = moduleData.hatoken;
-		const haUrl = moduleData.haurl;
-
+        const moduleData = this.db.getModuleData("homeassistant.ts", ['hatoken', 'haurl']) as ModuleData;
+        const token = moduleData.hatoken;
+        const haUrl = moduleData.haurl;
+		
         if (token == '') {
             console.log(`[Home Assistant] [${chalk.red('ERROR')}] ${chalk.bgRed(' NO HA TOKEN ')}`);
             return {response: 'You have no Home Assistant token set!', endRequest: true};
