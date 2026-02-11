@@ -1,5 +1,5 @@
 # OwO Assistant
-
+![https://hackatime-badge.hackclub.com/U0ADGEN6745/owo-assistant](https://hackatime-badge.hackclub.com/U0ADGEN6745/owo-assistant)
 ## Server Installation
 > [!NOTE]
 > The fastest way to get the server up is with docker, to serve the app with docker, first ensure you have docker installed on your machine then, either use the provided `docker compose`, detailed below.
