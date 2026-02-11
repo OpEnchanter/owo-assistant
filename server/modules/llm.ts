@@ -36,6 +36,18 @@ interface OpenAIResponse {
 	output: OpenAIMessage[]
 }
 
+interface AnthropicContent {
+	type: string,
+	text: string
+}
+
+interface AnthropicResponse { 
+	id: string,
+	type: string,
+	role: string,
+	content: AnthropicContent[]
+}
+
 export class Module extends ModuleBase {
 	constructor (db: OwODB) { super(db) }
 
@@ -88,7 +100,26 @@ export class Module extends ModuleBase {
 			return {response: response, endRequest: true} as ModuleResult;
 		} else if (moduleData.anthropicApiKey != '') {
 			console.log(`[LLM] ${chalk.green('Making request to Anthropic')}`);
+			const res = await fetch("https://api.anthropic.com/v1/messages", {
+				method: "POST",
+				headers: {
+					"content-type": "application/json",
+					"x-api-key": moduleData.anthropicApiKey,
+					"anthropic-version": "2023-06-01"
+				},
+				body: JSON.stringify({
+					"model": moduleData.modelId,
+					"max_tokens": 1024,
+					"messages": [{"role":"user", "content":query}]
+				})
+			});
 
+			const data: AnthropicResponse = await res.json() as AnthropicResponse;
+			if (data.content[0]) {
+				response = data.content[0].text;
+			}
+			
+			return {response: response, endRequest: true} as ModuleResult;
 		} else {
 			console.log(`[LLM] [${chalk.red('ERROR')}] ${chalk.bgRed(' NO LLM PROVIDER ')}`);
 			response = "You have no LLM provider set up!"
