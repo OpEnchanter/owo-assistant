@@ -2,16 +2,10 @@
 
 ## Server Installation
 > [!NOTE]
-> The fastest way to get the server up is with docker, to serve the app with docker, first ensure you have docker installed on your machine then, either use the provided `docker compose` or `docker run`, both detailed below.
-
-### Non-containerized installation
-To install and run the app without using a containerization system such as docker, you must clone the github repository, navigate to the relevant files and run the bun app. This can be done with the following command.
-```bash
-git clone https://github.com/OpEnchanter/owo-assistant.git; cd owo-assistant/server; bun install; bun run index.ts
-```
+> The fastest way to get the server up is with docker, to serve the app with docker, first ensure you have docker installed on your machine then, either use the provided `docker compose`, detailed below.
 
 ### Containerized installation
-Running the server in Docker is relatively simple, copy the YAML below into a new `docker-compose.yml` file and run `docker compose up -d` *or* run the provided command for downloading and running the docker compose *or* use the `docker run` command below.
+Running the server in Docker is relatively simple, copy the YAML below into a new `docker-compose.yml` file and run `docker compose up -d` *or* run the provided command for downloading and running the docker compose.
 
 **Docker Compose**
 ```yaml
@@ -27,12 +21,11 @@ services:
 ```bash
 curl -O https://raw.githubusercontent.com/OpEnchanter/owo-assistant/refs/heads/main/server/docker-compose.yml; docker compose up -d
 ```
-> [!WARNING]
-> The container started with the provided `docker run` command is ephemeral, and the database is deleted when it is stopped.
 
-**Docker Run**
+### Non-containerized installation
+To install and run the app without using a containerization system such as docker, you must clone the github repository, navigate to the relevant files and run the bun app. This can be done with the following command.
 ```bash
-docker run -d -p 8080:8080 --name owo-assistant ghcr.io/openchanter/owo-assistant:latest
+git clone https://github.com/OpEnchanter/owo-assistant.git; cd owo-assistant/server; bun install; bun run index.ts
 ```
 
 ## Client Installation
