@@ -19,6 +19,23 @@ interface OllamaResponse {
 	done_reason: string,
 }
 
+interface OpenAIContent {
+	type: string,
+	text: string,
+	annotations: string[]
+}
+
+interface OpenAIMessage { 
+	id: string,
+	type: string,
+	role: string,
+	content: OpenAIContent[]
+}
+
+interface OpenAIResponse {
+	output: OpenAIMessage[]
+}
+
 export class Module extends ModuleBase {
 	constructor (db: OwODB) { super(db) }
 
@@ -50,7 +67,25 @@ export class Module extends ModuleBase {
 			return {response: response, endRequest: true} as ModuleResult;
 		} else if (moduleData.openAIApiKey != '') {
 			console.log(`[LLM] ${chalk.green('Making request to OpenAI')}`);
+			const res = await fetch(`https://api.openai.com/v1/responses`, {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${moduleData.openAIApiKey}`
+				},
+				body: JSON.stringify({
+					"model": moduleData.modelId,
+					"input": query
+				})
+			});
 
+			const data: OpenAIResponse = await res.json() as OpenAIResponse;
+			if (data.output[0]?.content[0]) {
+				response = data.output[0].content[0].text;
+			}
+
+
+			return {response: response, endRequest: true} as ModuleResult;
 		} else if (moduleData.anthropicApiKey != '') {
 			console.log(`[LLM] ${chalk.green('Making request to Anthropic')}`);
 

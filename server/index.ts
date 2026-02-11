@@ -209,15 +209,14 @@ app.get("/exposedParams", (req: Request, res: Response) => {
 	let data: { [key: string]: { [key: string]: string } } = {};
 	Object.keys(modules).forEach(moduleName => {
 		data[moduleName] = {};
-		const moduleData: Object = db.getModuleData(moduleName);
-		if (Object.hasOwn(modules, moduleName)) {
-			modules[moduleName].exposedParams().forEach(param => {
-				data[moduleName][param] = '';
-				if (moduleData != null) {
-					data[moduleName][param] = moduleData[param];
-				}
-			});
-		}
+		let exposedParams = modules[moduleName].exposedParams()
+		const moduleData: Object = db.getModuleData(moduleName, exposedParams);
+		exposedParams.forEach(param => {
+			data[moduleName][param] = '';
+			if (moduleData != null) {
+				data[moduleName][param] = moduleData[param];
+			}
+		});
 	});
 	res.send(JSON.stringify(data));
 });

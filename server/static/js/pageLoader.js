@@ -108,6 +108,8 @@ async function addUnloadedModules() {
         })
 }
 
+const notificationPopup = document.querySelector('.notification');
+
 moduleConfig.addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -132,6 +134,13 @@ moduleConfig.addEventListener('submit', async (e) => {
     })
         .then(res => {
             console.log(res);
+            if (res.status == 200) {
+                notificationPopup.style.top = "15px";
+
+                setTimeout(() => {
+                    notificationPopup.style.top = "-150px";
+                }, 1500);
+            }
         });
 
 
