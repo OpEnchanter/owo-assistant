@@ -92,13 +92,16 @@ export class Module extends ModuleBase {
 			});
 
 			const data: OpenAIResponse = await res.json() as OpenAIResponse;
+
 			if (data.output[0]?.content[0]) {
 				response = data.output[0].content[0].text;
 			}
 
 
 			return {response: response, endRequest: true} as ModuleResult;
-		} else if (moduleData.anthropicApiKey != '') {
+		}
+		
+		if (moduleData.anthropicApiKey != '') {
 			console.log(`[LLM] ${chalk.green('Making request to Anthropic')}`);
 			const res = await fetch("https://api.anthropic.com/v1/messages", {
 				method: "POST",
@@ -125,8 +128,5 @@ export class Module extends ModuleBase {
 			response = "You have no LLM provider set up!"
 			return {response: response, endRequest: true} as ModuleResult;
 		}
-
-		return {response: '', endRequest: true}
-		
 	}
 }
