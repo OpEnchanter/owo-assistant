@@ -120,4 +120,4 @@ Module related classes and interfaces.
 - **ModuleBase** - Can be extended to create a module.
 - type **ModuleResult** - The return type of any module `{ endRequest:boolean, response:string }`. `endRequest` determines if the chain of modules will be stopped and `response` will be returned to the client.
 
-> Made with ❤️ by a human.
+<p align="center">Made with ❤️ by a human.</p>
