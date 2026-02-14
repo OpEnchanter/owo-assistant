@@ -44,6 +44,8 @@ body {
 }
 
 .card {
+	display: flex;
+	flex-direction: column;
 	padding: 10px;
 	margin: 10px;
 
@@ -94,7 +96,7 @@ select {
 button {
 	border: none;
 	border-radius: var(--br-small);
-	padding: 5px;
+	padding: 8px;
 	margin-top: 10px;
 	background: var(--accent-1);
 	transition-duration: 150ms;
@@ -414,6 +416,20 @@ div.fg label {
 .info:hover .popover::before {
 	opacity: 1;
 	visibility: visible;
+}
+
+.danger {
+	border-color: var(--error);
+	color: var(--error);
+	align-items: center;
+}
+
+.danger button {
+	width: 100%;
+}
+
+.danger h3 {
+	color: var(--error);
 }
 
 @media (max-width: 1080px) {

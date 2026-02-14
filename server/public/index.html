@@ -68,14 +68,17 @@
 		
 			<div class="chartGrid">			
 				<div class="chart pie"><canvas id="cumulativeModuleRequestsChart" class="chart"></canvas></div>
-				<div class="chart"><canvas id="dailyTotalRequestsChart" class="chart"></canvas></div>
+				<div class="chart"><cNew anvas id="dailyTotalRequestsChart" class="chart"></canvas></div>
 			</div>
 			
 		</div>
 
 		<div class="card">
 			<h2>API</h2>
-			<button id="resetApiKey">Rotate API Key</button>
+			<div class="fg danger">
+				<h3>DANGER ZONE</h3>
+				<button id="resetApiKey">Rotate API Key</button>
+			</div>
 		</div>
 
 		<div class="modal" id="newApiKeyModal" style="visibility: hidden;">
