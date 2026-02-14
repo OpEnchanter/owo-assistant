@@ -30,6 +30,11 @@ try {
 	db.setGlobalData('sessionSecret', sessionSecret);
 }
 
+if (sessionSecret === '') {
+	sessionSecret = crypto.randomBytes(32).toString('base64');
+	db.setGlobalData('sessionSecret', sessionSecret);
+}
+
 let apiKey = '';
 try {
 	apiKey = db.getGlobalData('apiKey');
