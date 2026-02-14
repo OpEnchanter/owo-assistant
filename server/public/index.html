@@ -38,12 +38,30 @@
 		<div class='card'>
 			<h2>Module Configs</h2>
 			<br>
+			<div class="fg">
+				<h3>Post Processing</h3>
+				<div class="linear">
+					<p>Natural Language Post Processing
+						<div class="info">i
+							<div class="popover">The result of modules will be fed to an LLM to provide more natural responses.</div>
+						</div>
+					</p>
+					<label class="switch">
+						<input type="checkbox">
+					</label>
+				</div>
+			</div>
 			<form id='moduleConfig'>
+				
 			</form>
 		</div>
 
 		<div class="card">
-			<h2>Statistics</h2>
+			<h2 class="linear">Statistics
+				<div class="info">i
+					<div class="popover">Usage statistics for the app. none of this data is ever shared with a third pary.</div>
+				</div>
+			</h2>
 			<div class="fg">
 				<p id="totalQueries"></p>
 			</div>

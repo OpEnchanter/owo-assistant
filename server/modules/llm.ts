@@ -77,7 +77,9 @@ export class Module extends ModuleBase {
 			response = data.response;
 
 			return {response: response, endRequest: true} as ModuleResult;
-		} else if (moduleData.openAIApiKey != '') {
+		}
+		
+		if (moduleData.openAIApiKey != '') {
 			console.log(`[LLM] ${chalk.green('Making request to OpenAI')}`);
 			const res = await fetch(`https://api.openai.com/v1/responses`, {
 				method: "POST",
@@ -100,7 +102,7 @@ export class Module extends ModuleBase {
 
 			return {response: response, endRequest: true} as ModuleResult;
 		}
-		
+
 		if (moduleData.anthropicApiKey != '') {
 			console.log(`[LLM] ${chalk.green('Making request to Anthropic')}`);
 			const res = await fetch("https://api.anthropic.com/v1/messages", {
@@ -123,10 +125,10 @@ export class Module extends ModuleBase {
 			}
 			
 			return {response: response, endRequest: true} as ModuleResult;
-		} else {
-			console.log(`[LLM] [${chalk.red('ERROR')}] ${chalk.bgRed(' NO LLM PROVIDER ')}`);
-			response = "You have no LLM provider set up!"
-			return {response: response, endRequest: true} as ModuleResult;
 		}
+
+		console.log(`[LLM] [${chalk.red('ERROR')}] ${chalk.bgRed(' NO LLM PROVIDER ')}`);
+		response = "You have no LLM provider set up!"
+		return {response: response, endRequest: true} as ModuleResult;
 	}
 }
