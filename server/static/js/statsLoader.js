@@ -16,32 +16,41 @@ async function loadStatistics() {
                 humanReadableKeys.push(date.toDateString());
             }
 
+            console.log(humanReadableKeys);
 
-            new Chart(dailyTotalRequestsChart, {
-                type: 'line',
-                data: {
-                    labels: humanReadableKeys,
-                    datasets: [{
-                        label: 'Total Requests',
-                        data: Object.values(statistics.requestsPerDay),
-                        fill: false,
-                        borderColor: 'rgb(75, 192, 192)',
-                        tension: 0.1
-                    }]
-                },
-            });
+            if (humanReadableKeys.length > 0) {
+                new Chart(dailyTotalRequestsChart, {
+                    type: 'line',
+                    data: {
+                        labels: humanReadableKeys,
+                        datasets: [{
+                            label: 'Total Requests',
+                            data: Object.values(statistics.requestsPerDay),
+                            fill: false,
+                            borderColor: 'rgb(75, 192, 192)',
+                            tension: 0.1
+                        }]
+                    },
+                });
 
-            new Chart(cumulativeModuleRequestsChart, {
-                type: 'pie',
-                data: {
-                    labels: Object.keys(statistics.moduleRequests),
-                    datasets: [
-                        {
-                            data: Object.values(statistics.moduleRequests)
-                        }
-                    ]
-                }
-            });
+                new Chart(cumulativeModuleRequestsChart, {
+                    type: 'pie',
+                    data: {
+                        labels: Object.keys(statistics.moduleRequests),
+                        datasets: [
+                            {
+                                data: Object.values(statistics.moduleRequests)
+                            }
+                        ]
+                    }
+                });
+            } else {
+                console.log("No data!");
+                dailyTotalRequestsChart.remove();
+                cumulativeModuleRequestsChart.remove();
+            }
+
+            
         });
 }
 loadStatistics();

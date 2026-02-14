@@ -241,9 +241,14 @@ app.get("/unloadedModules", async (req: Request, res: Response) => {
 app.post("/loadModule", async (req: Request, res: Response) => {
 	console.log(`[OwO] ${chalk.green('Loading new module')}`);
 	const data = req.body;
-	moduleImports.push(data.moduleName);
-	loadModules(true);
-	res.sendStatus(200);
+	if (data.moduleName && data.moduleName != '') {
+		moduleImports.push(data.moduleName);
+		loadModules(true);
+		res.sendStatus(200);
+	} else {
+		res.sendStatus(404);
+	}
+	
 });
 
 app.post("/removeModule", async (req: Request, res: Response) => {

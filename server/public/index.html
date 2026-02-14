@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<link rel='stylesheet' href='/index.css'>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	</head>
 	<body>
 		<div class="notification">Configs Updated!</div>
@@ -59,7 +60,7 @@
 		<div class="card">
 			<h2 class="linear">Statistics
 				<div class="info">i
-					<div class="popover">Usage statistics for the app. none of this data is ever shared with a third pary.</div>
+					<div class="popover">Usage statistics for the app. none of this data is ever shared with a third party.</div>
 				</div>
 			</h2>
 			<div class="fg">
@@ -96,6 +97,7 @@
 				navigator.clipboard.writeText(key);
 
 				notificationPopup.style.top = "15px";
+				notificationPopup.style.background = "var(--success)";
                 notificationPopup.innerText = "API key copied!"
 
                 setTimeout(() => {

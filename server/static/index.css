@@ -48,12 +48,11 @@ body {
 	flex-direction: column;
 	padding: 10px;
 	margin: 10px;
-
-	border-radius: var(--br-large);
-	
+	margin-top: 10px;
 	background: var(--bg);
-
+	border-radius: var(--br-large);
 	border: 1px solid var(--border);
+	transition-duration: 150ms;
 }
 
 form {
@@ -83,15 +82,17 @@ select {
 }
 
 .fg {
+	display: flex;
+	flex-direction: column;
 	background: var(--bg);
 	padding: 10px;
 	border-radius: var(--br-med);
 	border: 1px solid var(--border);
-	margin: 10px;
-	display: flex;
-	flex-direction: column;
-	color: var(--text-muted);
+	margin-top: 10px;
+	transition-duration: 150ms;
 }
+
+
 
 button {
 	border: none;
@@ -433,6 +434,12 @@ div.fg label {
 }
 
 @media (max-width: 1080px) {
+	:root {
+		--br-small: 24px;
+		--br-med: 24px;
+		--br-large: 32px;
+	}
+
 	.modal.login {
 		transform: translate(-50%, -50%) scale(2);
 		max-width: 75vw;
@@ -440,19 +447,16 @@ div.fg label {
 
 	button {
 		height: 50px;
-		border-radius: var(--br-large);
 		font-size: 18px;
 	}
 
 	input {
 		height: 50px;
-		border-radius: var(--br-large);
 		font-size: 24px;
 	}
 
 	select {
 		height: 50px;
-		border-radius: var(--br-large);
 		font-size: 18px;
 	}
 

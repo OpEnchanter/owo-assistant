@@ -2,7 +2,10 @@ const moduleConfig = document.getElementById('moduleConfig');
 
 const unloadedModulesSelector = document.getElementById('unloadedModules');
 
+const notificationPopup = document.querySelector('.notification');
+
 async function loadConfigs() {
+    moduleConfig.innerHTML = '';
     await fetch('/exposedParams')
         .then(res => {return res.json()})
         .then(data => {
@@ -40,6 +43,7 @@ async function loadConfigs() {
 
 async function loadModules() {
     const loadedModules = document.getElementById('loadedModules');
+    loadedModules.innerHTML = '';
     await fetch("/loadedModules")
         .then(data => {return data.json()})
         .then(moduleNames => {
@@ -66,8 +70,27 @@ async function loadModules() {
                                 method: 'POST',
                                 headers: {'Content-Type': 'application/json'},
                                 body: JSON.stringify({'moduleName':mname})
-                            });
-                            window.location.reload();
+                            })
+                                .then((res) => {
+                                    if (res.status = 200) {
+                                        notificationPopup.style.top = "15px";
+                                        notificationPopup.style.background = "var(--info)";
+                                        notificationPopup.innerText = "Module removed!"
+
+                                        setTimeout(() => {
+                                            notificationPopup.style.top = "-150px";
+                                        }, 1500);
+                                    } else {
+                                        notificationPopup.style.top = "15px";
+                                        notificationPopup.style.background = "var(--error)";
+                                        notificationPopup.innerText = "Module failed to remove."
+
+                                        setTimeout(() => {
+                                            notificationPopup.style.top = "-150px";
+                                        }, 1500);
+                                    }
+                                });
+                            loadAll();
                         });
 
                         right.appendChild(removeButton);
@@ -88,11 +111,31 @@ addModuleButton.addEventListener('click', async (e) => {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({'moduleName':unloadedModulesSelector.value})
     })
-        .then(res => {console.log(res);});
-    window.location.reload();
+        .then(res => {
+            console.log(res);
+            if (res.status == 200) {
+                notificationPopup.style.top = "15px";
+                notificationPopup.style.background = "var(--success)";
+                notificationPopup.innerText = "Module loaded!"
+
+                setTimeout(() => {
+                    notificationPopup.style.top = "-150px";
+                }, 1500);
+            } else {
+                notificationPopup.style.top = "15px";
+                notificationPopup.style.background = "var(--error)";
+                notificationPopup.innerText = "Module failed to load."
+
+                setTimeout(() => {
+                    notificationPopup.style.top = "-150px";
+                }, 1500);
+            }
+        });
+    loadAll();
 });
 
 async function addUnloadedModules() {
+    unloadedModulesSelector.innerHTML = '';
     await fetch("/unloadedModules")
         .then(data => { return data.json() })
         .then(json => { 
@@ -108,7 +151,6 @@ async function addUnloadedModules() {
         })
 }
 
-const notificationPopup = document.querySelector('.notification');
 
 moduleConfig.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -136,6 +178,7 @@ moduleConfig.addEventListener('submit', async (e) => {
             console.log(res);
             if (res.status == 200) {
                 notificationPopup.style.top = "15px";
+                notificationPopup.style.background = "var(--success)";
                 notificationPopup.innerText = "Configs updated!"
 
                 setTimeout(() => {
@@ -148,6 +191,10 @@ moduleConfig.addEventListener('submit', async (e) => {
     console.log(data);
 });
 
-loadConfigs();
-loadModules();
-addUnloadedModules();
+function loadAll() {
+    loadConfigs();
+    loadModules();
+    addUnloadedModules();
+}
+
+loadAll();
