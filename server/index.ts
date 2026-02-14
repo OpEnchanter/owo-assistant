@@ -161,7 +161,7 @@ app.post("/login", async (req: Request, res: Response) => {
 });
 
 app.get("/resetApiKey", (req: Request, res: Response) => {
-	const newKey = crypto.randomBytes(64).toString('base64');
+	const newKey = `sk-${crypto.randomBytes(32).toString('hex')}`;
 	apiKey = Bun.CryptoHasher.hash('sha256', newKey).toString('hex');
 	db.setGlobalData('apiKey', apiKey);
 	res.send(newKey);

@@ -12,8 +12,8 @@
 	--accent-1: oklch(75% 0.05 215);
 	--accent-1-dark: oklch(60% 0.05 215);
 
-	--text: oklch(85% 0.01 245);
-	--text-muted: oklch(75% 0.01 245);
+	--text: oklch(90% 0.01 245);
+	--text-muted: oklch(85% 0.01 245);
 
 	--success: oklch(75% 0.05 175);
 	--error: oklch(75% 0.05 0);
@@ -193,12 +193,11 @@ div.fg label {
 
 .modal {
 	width: 25vw;
-	
-
-	display: block;
+	display: flex;
 	position: fixed;
+	flex-direction: column;
 
-	align-items: center;
+	align-items: start;
 	justify-content: center;
 
 	top: 50vh;
@@ -208,30 +207,73 @@ div.fg label {
 
 	border: 1px solid var(--border);
 	border-radius: var(--br-med);
-	padding: 10px;
+	padding: 12px;
 
 	background: var(--bg);
 }
 
+.modal#newApiKeyModal {
+	width: 65vw;
+}
+
+.modal form {
+	display: flex;
+	flex-grow: 1;
+	width: 100%;
+}
+
 .modal form * {
+	display: flex;
+	flex-grow: 1;
 	margin: 5px;
+}
+
+.modal form button {
+	align-items: center;
+	justify-content: center;
+}
+
+.modal#newApiKeyModal button {
+	width: 25%;
 }
 
 .modal .fg#apiKey {
 	overflow-y: hidden;
 	overflow-x: scroll;
-	text-wrap: none;
-	height: 16px;
+	white-space: nowrap;
+	position: relative;
+	width: 95%;
+	display: flex;
+	padding: 12px;
+	flex-grow: 0;
+	box-sizing: border-box;
+}
+
+.modal .fg#apiKey .copy {
+	position: absolute;
+	display: flex;
+	width: 36px;
+	height: 36px;
+	right: 5px;
+	top: 5px;
+	margin: 0px;
+	padding: 0px;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	aspect-ratio: 1;
+	border-radius: var(--br-med);
+	background: var(--bg-light);
+	border: 1px solid var(--border);
 }
 
 .notification {
-	width: 20vw;
-	height: 35px;
 	border-radius: 100rem;
 	position: fixed;
 	display: flex;
 	top: -150px;
 	left: 50vw;
+	padding: 12px;
 	background: var(--success);
 	transform: translateX(-50%);
 	align-items: center;
@@ -267,8 +309,8 @@ div.fg label {
 	content: '';
 	display: block;
 	position: absolute;
-	top:-0.5px;left:-0.5px;
-	width: 25px;
+	top:-2px;left:-2px;
+	width: 26px;
 	aspect-ratio: 1;
 	border-radius: 100rem;
 	background: var(--bg-light);

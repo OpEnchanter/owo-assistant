@@ -43,7 +43,7 @@
 				<div class="linear">
 					<p>Natural Language Post Processing
 						<div class="info">i
-							<div class="popover">The result of modules will be fed to an LLM to provide more natural responses.</div>
+							<div class="popover">The result of modules will be fed to an LLM to provide more natural responses.<br>NOTE: Requires the LLM module</div>
 						</div>
 					</p>
 					<label class="switch">
@@ -75,10 +75,10 @@
 
 		<div class="card">
 			<h2>API</h2>
-			<button id="resetApiKey">Reset API Key</button>
+			<button id="resetApiKey">Rotate API Key</button>
 		</div>
 
-		<div class="modal" id="newApiKeyModal" style="height:100px; width: 65vw; visibility: hidden;">
+		<div class="modal" id="newApiKeyModal" style="visibility: hidden;">
 			<h3>New API Key</h3>
 			<p class="fg" style="margin:5px; overflow-x: scroll;" id="apiKey"></p>
 			<button id="close" style="margin:0px">Done</button>
@@ -88,11 +88,27 @@
 		<script type="module" src="/js/statsLoader.js"></script>
 
 		<script>
+
+			function copyApiKey() {
+				navigator.clipboard.writeText(key);
+
+				notificationPopup.style.top = "15px";
+                notificationPopup.innerText = "API key copied!"
+
+                setTimeout(() => {
+                    notificationPopup.style.top = "-150px";
+                }, 1500);
+			}
+
 			const closeButton = document.getElementById("close");
 			const modal = document.getElementById("newApiKeyModal");
 			closeButton.addEventListener('click', (e) => {
 				modal.style.visibility = 'hidden';
+				key = '';
+				apiKey.innerHTML = '';
 			});
+
+			let key = '';
 
 			const resetApiKeyButton = document.getElementById('resetApiKey');
 			const apiKey = document.getElementById('apiKey');
@@ -100,7 +116,8 @@
 				await fetch('/resetApiKey')
 					.then(data => {return data.text();})
 					.then(newKey => {
-						apiKey.innerText = newKey;
+						apiKey.innerHTML = '<button onclick="copyApiKey()" class="copy" id="copyApiKey">📋</button>' + newKey;
+						key = newKey;
 						modal.style.visibility = 'visible';
 						console.log(newKey);
 					});

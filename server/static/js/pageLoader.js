@@ -136,6 +136,7 @@ moduleConfig.addEventListener('submit', async (e) => {
             console.log(res);
             if (res.status == 200) {
                 notificationPopup.style.top = "15px";
+                notificationPopup.innerText = "Configs updated!"
 
                 setTimeout(() => {
                     notificationPopup.style.top = "-150px";
