@@ -43,7 +43,9 @@ body {
 
 	background: var(--bg-dark);
 
-	display: flex;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	grid-template-rows: auto;
 	flex-direction: column;
 
 	box-sizing: border-box;
@@ -51,6 +53,10 @@ body {
 	color: var(--text);
 
 	font-family: var(--font-family);
+}
+
+.title {
+	grid-column: span 2;
 }
 
 .card {
@@ -321,7 +327,6 @@ div.fg label {
 	justify-content: center;
 	transition: all 215ms linear;
 	margin-left: 10px;
-	border: 1px solid var(--border);
 }
 
 .switch:hover {
@@ -336,12 +341,11 @@ div.fg label {
 	content: '';
 	display: block;
 	position: absolute;
-	top:3px;left:3px;
+	top:4px;left:4px;
 	width: 16px;
 	aspect-ratio: 1;
 	border-radius: 100rem;
 	background: var(--bg-light);
-	border: 1px solid var(--border);
 	backdrop-filter: blur(4px);
 	transition: all 125ms ease-in-out;
 }
@@ -519,9 +523,21 @@ div.fg label {
 		--pad-large: 28px;
 	}
 
+	body {
+		grid-template-columns: 1fr;
+	}
+
+	.title {
+		grid-column: span 1;
+	}
+
 	.modal.login {
 		transform: translate(-50%, -50%) scale(2);
 		max-width: 75vw;
+	}
+
+	.switch {
+		transform: scale(1.15);
 	}
 
 	button {
