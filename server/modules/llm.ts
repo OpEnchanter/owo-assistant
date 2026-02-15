@@ -95,12 +95,15 @@ export class Module extends ModuleBase {
 
 			const data: OpenAIResponse = await res.json() as OpenAIResponse;
 
-			if (data.output[0]?.content[0]) {
-				response = data.output[0].content[0].text;
+			if (Object.hasOwn(data, "output")) {
+				data.output.forEach(arg => {
+					if (arg.type = "completed") {
+						response = arg.content[0].text;
+					}
+				});
+
+				return {response: response, endRequest: true} as ModuleResult;
 			}
-
-
-			return {response: response, endRequest: true} as ModuleResult;
 		}
 
 		if (moduleData.anthropicApiKey != '') {
@@ -120,11 +123,11 @@ export class Module extends ModuleBase {
 			});
 
 			const data: AnthropicResponse = await res.json() as AnthropicResponse;
-			if (data.content[0]) {
+			if (Object.hasOwn(data, "content")) {
 				response = data.content[0].text;
+
+				return {response: response, endRequest: true} as ModuleResult;
 			}
-			
-			return {response: response, endRequest: true} as ModuleResult;
 		}
 
 		console.log(`[LLM] [${chalk.red('ERROR')}] ${chalk.bgRed(' NO LLM PROVIDER ')}`);

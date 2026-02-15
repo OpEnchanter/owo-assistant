@@ -7,6 +7,7 @@ import chalk from 'chalk';
 import session, { type SessionData } from 'express-session';
 import * as crypto from 'crypto';
 import { password } from "bun";
+import { processResult } from "post-processing/llm";
 
 interface Statistics {
 	totalQueries: number,
@@ -16,6 +17,11 @@ interface Statistics {
 
 interface CustomSessionData extends SessionData {
 	authenticated?: boolean
+}
+
+interface PostProcessingData {
+    naturalLanguageEnabled: boolean,
+    naturalLanguageModel: string
 }
 
 // Initialize DB
@@ -157,6 +163,8 @@ app.post("/login", async (req: Request, res: Response) => {
 	if (credentials.username === adminCredentials.username && await Bun.password.verify(credentials.password, adminCredentials.password)) {
 		(req.session as CustomSessionData).authenticated = true;
 		res.redirect('/');
+	} else {
+		res.sendStatus(404);
 	}
 });
 
@@ -226,6 +234,10 @@ app.get("/exposedParams", (req: Request, res: Response) => {
 	res.send(JSON.stringify(data));
 });
 
+app.get("/postProcessingValues", (req: Request, res: Response) => {
+	res.send(JSON.stringify(db.getModuleData("postProcessing")));
+});
+
 app.get("/unloadedModules", async (req: Request, res: Response) => {
 	let files = await readdir("./modules/");
 	let unloadedModules: string[] = [];
@@ -287,7 +299,13 @@ app.post("/query", async (req: Request, res: Response) => {
 		}
 	}
 
-	// Stats
+	// Response post-processing
+	const postProcessingData = db.getModuleData('postProcessing', ["naturalLanguageEnabled", "naturalLanguageModel"]) as PostProcessingData;
+	if (postProcessingData.naturalLanguageEnabled) {
+		response = await processResult(response.toString(), requestJson.query.toString(), db);
+	}
+
+	// Statistics
 	statistics.totalQueries++;
 	let today: Date = new Date();
 	today.setDate(today.getDate());

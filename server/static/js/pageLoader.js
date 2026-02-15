@@ -4,12 +4,13 @@ const unloadedModulesSelector = document.getElementById('unloadedModules');
 
 const notificationPopup = document.querySelector('.notification');
 
+let postProcessingContainer = undefined;
+
 async function loadConfigs() {
     moduleConfig.innerHTML = '';
     await fetch('/exposedParams')
         .then(res => {return res.json()})
-        .then(data => {
-            console.log(data);
+        .then(async data => {
             for (module in data) {
                 const container = document.createElement('div');
                 container.className = 'fg';
@@ -53,43 +54,34 @@ async function loadConfigs() {
             }
 
             if (Object.keys(data).includes("llm.ts")) {
-                const postProcessingContainer = document.createElement('div');
-                postProcessingContainer.className = "fg";
+                await fetch("/postProcessingValues")
+                    .then(res => { return res.json() })
+                    .then(data => {
+                        postProcessingContainer = document.createElement('div');
+                        postProcessingContainer.className = "fg";
 
-                    const title = document.createElement("h3");
-                    title.innerText = "Post Processing";
-                    postProcessingContainer.appendChild(title);
+                            const title = document.createElement("h3");
+                            title.innerText = "Post Processing";
+                            postProcessingContainer.appendChild(title);
 
-                    const row = document.createElement("div");
-                    row.className = "linear";
+                            createPostProcessingInput(
+                                "Natural Language Post Processing",
+                                "The result of modules will be fed to an LLM to provide more natural responses.",
+                                "naturalLanguageEnabled",
+                                "checkbox",
+                                data
+                            );
 
-                        const label = document.createElement("p");
-                        label.innerText = "Natural Language Post Processing"
-                        row.appendChild(label)
+                            createPostProcessingInput(
+                                "Natural Language Model",
+                                "The LLM model (ID) to be used for Natural language response generation. (use a fast, inexpensive model)",
+                                "naturalLanguageModel",
+                                "text",
+                                data
+                            )
 
-                        const info = document.createElement("div");
-                        info.className = "info";
-                            const text = document.createElement("p");
-                            text.innerText = "i";
-                            info.appendChild(text);
-
-                            const popover = document.createElement("div");
-                            popover.className = "popover";
-                            popover.innerText = "The result of modules will be fed to an LLM to provide more natural responses.";
-                            info.appendChild(popover);
-                        row.appendChild(info);
-
-                        const lever = document.createElement("label");
-                        lever.className = "switch"
-                            const checkbox = document.createElement("input")
-                            checkbox.setAttribute("data-path", `test.ts/xyz`);
-                            checkbox.type = "checkbox";
-                            lever.appendChild(checkbox)
-                        row.appendChild(lever);
-
-                    postProcessingContainer.appendChild(row);
-
-                moduleConfig.appendChild(postProcessingContainer);
+                        moduleConfig.appendChild(postProcessingContainer);
+                    });
             }
 
             const submitButton = document.createElement('button');
@@ -98,6 +90,48 @@ async function loadConfigs() {
 
             moduleConfig.appendChild(submitButton);
         });
+}
+
+function createPostProcessingInput(labelText, infoText, path, inputType, data) {
+    const row = document.createElement("div");
+        row.className = "linear";
+
+            const label = document.createElement("p");
+            label.innerText = labelText;
+            row.appendChild(label)
+
+            const info = document.createElement("div");
+            info.className = "info";
+                const text = document.createElement("p");
+                text.innerText = "i";
+                info.appendChild(text);
+
+                const popover = document.createElement("div");
+                popover.className = "popover";
+                popover.innerText = infoText;
+                info.appendChild(popover);
+            row.appendChild(info);
+
+            const lever = document.createElement("label");
+            if (inputType  === "checkbox") {
+                lever.className = "switch"
+            }
+                const inputField = document.createElement("input")
+                inputField.setAttribute("data-path", `postProcessing/${path}`);
+                inputField.type = inputType;
+
+                if (Object.hasOwn(data, path)) {
+                    if (inputType === "checkbox") {
+                        inputField.checked = data[path];
+                    } else {
+                        inputField.value = data[path];
+                    }
+                }
+
+                lever.appendChild(inputField)
+            row.appendChild(lever);
+
+        postProcessingContainer.appendChild(row);
 }
 
 async function loadModules() {
@@ -165,14 +199,12 @@ async function loadModules() {
 const addModuleButton = document.getElementById('addModule');
 addModuleButton.addEventListener('click', async (e) => {
     e.preventDefault();
-    console.log(unloadedModulesSelector.value);
     await fetch("/loadModule", {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({'moduleName':unloadedModulesSelector.value})
     })
         .then(res => {
-            console.log(res);
             if (res.status == 200) {
                 notificationPopup.style.top = "15px";
                 notificationPopup.style.background = "var(--success)";
@@ -234,15 +266,12 @@ moduleConfig.addEventListener('submit', async (e) => {
         }
     });
 
-    console.log(data);
-
     await fetch('/updateConfigs', {
         method: "POST",
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(data)
     })
         .then(res => {
-            console.log(res);
             if (res.status == 200) {
                 notificationPopup.style.top = "15px";
                 notificationPopup.style.background = "var(--success)";
@@ -253,9 +282,6 @@ moduleConfig.addEventListener('submit', async (e) => {
                 }, 1500);
             }
         });
-
-
-    console.log(data);
 });
 
 function loadAll() {
