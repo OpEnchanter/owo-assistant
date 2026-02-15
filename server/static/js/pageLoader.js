@@ -19,11 +19,14 @@ async function loadConfigs() {
                     const moduleHeader = document.createElement('h3');
                     moduleHeader.innerText = module;
                     header.appendChild(moduleHeader);
-
-                    const dropdownController = document.createElement('input');
-                    dropdownController.className = "dropdownController";
-                    dropdownController.type = "checkbox";
-                    header.appendChild(dropdownController);
+                    
+                    const dropdownControllerContainer = document.createElement("label");
+                    dropdownControllerContainer.className = "dropdownControllerContainer";
+                        const dropdownController = document.createElement('input');
+                        dropdownController.className = "dropdownController";
+                        dropdownController.type = "checkbox";
+                        dropdownControllerContainer.appendChild(dropdownController);
+                    header.appendChild(dropdownControllerContainer);
 
                 container.appendChild(header);
 
@@ -131,7 +134,9 @@ async function loadModules() {
                                     if (res.status = 200) {
                                         notificationPopup.style.top = "15px";
                                         notificationPopup.style.background = "var(--info)";
-                                        notificationPopup.innerText = "Module removed!"
+                                        notificationPopup.innerText = "Module removed!";
+
+                                        loadAll();
 
                                         setTimeout(() => {
                                             notificationPopup.style.top = "-150px";
@@ -146,7 +151,6 @@ async function loadModules() {
                                         }, 1500);
                                     }
                                 });
-                            loadAll();
                         });
 
                         right.appendChild(removeButton);
@@ -174,6 +178,8 @@ addModuleButton.addEventListener('click', async (e) => {
                 notificationPopup.style.background = "var(--success)";
                 notificationPopup.innerText = "Module loaded!"
 
+                loadAll();
+
                 setTimeout(() => {
                     notificationPopup.style.top = "-150px";
                 }, 1500);
@@ -187,7 +193,6 @@ addModuleButton.addEventListener('click', async (e) => {
                 }, 1500);
             }
         });
-    loadAll();
 });
 
 async function addUnloadedModules() {

@@ -480,23 +480,28 @@ div.fg label {
 }
 
 .dropdownController {
-	display: flex;
-	padding: 0px;
+	visibility: hidden;
 	margin: 0px;
-	width: 16px;
-	align-items: center;
-	justify-content: center;
+	padding: 0px;
 }
 
-.dropdownController::after {
-	content: '';
+.dropdownControllerContainer {
 	display: flex;
-	position: absolute;
-	top: 0px;
-	left: 0px;
 	width: 24px;
 	height: 24px;
-	background: red;
+	background: url('/images/arrow-down.svg');
+	transform: rotateZ(-90deg);
+	margin:0px !important;
+	padding: 0px;
+	transition: all 150ms ease;
+}
+
+.dropdownControllerContainer:hover {
+	cursor: pointer;
+}
+
+.dropdownControllerContainer:has(.dropdownController:checked) {
+	transform: rotateZ(0deg);
 }
 
 .moduleConfigHeader {
