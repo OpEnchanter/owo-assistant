@@ -16,7 +16,7 @@ async function loadStatistics() {
                 humanReadableKeys.push(date.toDateString());
             }
 
-            console.log(humanReadableKeys);
+            console.log(humanReadableKeys.length);
 
             if (humanReadableKeys.length > 0) {
                 new Chart(dailyTotalRequestsChart, {
@@ -46,8 +46,8 @@ async function loadStatistics() {
                 });
             } else {
                 console.log("No data!");
-                dailyTotalRequestsChart.remove();
-                cumulativeModuleRequestsChart.remove();
+                dailyTotalRequestsChart.parentElement.remove();
+                cumulativeModuleRequestsChart.parentElement.remove();
             }
 
             

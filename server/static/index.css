@@ -13,16 +13,26 @@
 	--accent-1-dark: oklch(60% 0.05 215);
 
 	--text: oklch(90% 0.01 245);
-	--text-muted: oklch(85% 0.01 245);
+	--text-muted: oklch(75% 0.01 245);
 
 	--success: oklch(75% 0.05 175);
 	--error: oklch(75% 0.05 0);
 	--info: oklch(75% 0.05 315);
 
 	/* Borders */
-	--br-small: 8px;
+	--br-small: 12px;
 	--br-med: 16px;
 	--br-large: 24px;
+
+	/* Sizes */
+	--static-small: 24px;
+	--static-medium: 32px;
+	--static-large: 48px;
+
+	/* Padding */
+	--pad-small: 4px;
+	--pad-medium: 8px;
+	--pad-large: 16px;
 }
 
 body {
@@ -62,20 +72,18 @@ form {
 }
 
 input {
-	height: 25px;
 	border: none;
 	border-radius: var(--br-small);
-	padding: 5px;
+	padding: var(--pad-medium);
 	background: var(--bg-light);
 	color: var(--text);
 	border: 1px solid var(--border);
 }
 
 select {
-	height: 25px;
 	border: none;
 	border-radius: var(--br-small);
-	padding: 5px;
+	padding: var(--pad-medium);
 	background: var(--bg-light);
 	color: var(--text);
 	border: 1px solid var(--border);
@@ -92,12 +100,10 @@ select {
 	transition-duration: 150ms;
 }
 
-
-
 button {
 	border: none;
 	border-radius: var(--br-small);
-	padding: 8px;
+	padding: var(--pad-medium);
 	margin-top: 10px;
 	background: var(--accent-1);
 	transition-duration: 150ms;
@@ -121,11 +127,11 @@ h1, h2, h3 {
 
 .chip {
 	width: 35%;
-	min-width: 250px;
-	height: 25px;
+	min-width: 350px;
+	height: var(--static-medium);
 	border-radius: var(--br-large);
 	background: var(--bg-light);
-	padding: 5px;
+	padding: 4px;
 	margin: 10px;
 	margin-left: 30px;
 	padding-left: 15px;
@@ -133,13 +139,15 @@ h1, h2, h3 {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	border: 1px solid var(--border)
+	border: 1px solid var(--border);
+	box-sizing: border-box;
+	flex-grow: 0;
 }
 
 .remove {
 	display: flex;
-	width: 25px;
-	height: 25px;
+	width: var(--static-small);
+	height: var(--static-small);
 	border-radius: 100rem;
 	background: #4f4a4f;
 	border: 1px solid var(--border);
@@ -240,34 +248,49 @@ div.fg label {
 	width: 25%;
 }
 
-.modal .fg#apiKey {
-	overflow-y: hidden;
-	overflow-x: scroll;
-	white-space: nowrap;
-	position: relative;
-	width: 95%;
+.apiKeyContainer {
 	display: flex;
-	padding: 12px;
-	flex-grow: 0;
-	box-sizing: border-box;
+	position: relative;
+	width: 100%;
+	margin-top: 8px;
+	margin-bottom: 8px;
+	padding: 0px;
 }
 
-.modal .fg#apiKey .copy {
+.modal .apiKeyContainer #copyApiKey {
 	position: absolute;
 	display: flex;
-	width: 36px;
 	height: 36px;
-	right: 5px;
-	top: 5px;
+	width: 36px;
+	right: 6px;
+	top: 6px;
 	margin: 0px;
 	padding: 0px;
 	align-items: center;
 	justify-content: center;
 	box-sizing: border-box;
-	aspect-ratio: 1;
 	border-radius: var(--br-med);
 	background: var(--bg-light);
 	border: 1px solid var(--border);
+}
+
+#apiKey {
+	display: flex;
+	position: relative;
+
+	overflow-y: hidden;
+	overflow-x: scroll;
+	white-space: nowrap;
+
+	box-sizing: border-box;
+
+	width: 100%;
+
+	padding: 12px;
+	flex-grow: 0;
+	margin: 0px;
+
+	color: var(--text-muted);
 }
 
 .notification {
@@ -284,6 +307,7 @@ div.fg label {
 	color: black;
 	border: 1px solid white;
 	transition: all 450ms cubic-bezier(.16,.93,0,1.32);
+	z-index: 1000;
 }
 
 .switch {
@@ -312,8 +336,8 @@ div.fg label {
 	content: '';
 	display: block;
 	position: absolute;
-	top:-2px;left:-2px;
-	width: 26px;
+	top:3px;left:3px;
+	width: 16px;
 	aspect-ratio: 1;
 	border-radius: 100rem;
 	background: var(--bg-light);
@@ -324,6 +348,7 @@ div.fg label {
 
 .switch:has(input:checked)::after {
 	transform: translateX(24px);
+	background: var(--bg-dark);
 }
 
 .switch:has(input:checked) {
@@ -346,6 +371,11 @@ div.fg label {
 	position: relative;
 	font-weight: 100;
 	color: var(--info);
+}
+
+.info p {
+	padding: 0px;
+	margin: 0px;
 }
 
 .info:hover {
@@ -433,11 +463,60 @@ div.fg label {
 	color: var(--error);
 }
 
+.dropdown {
+	display: flex;
+	flex-direction: column;
+	height: 0px;
+	overflow: hidden;
+}
+
+.fg .moduleConfigHeader:has(.dropdownController:checked) + .dropdown {
+	transition: all 150ms ease;
+	height: fit-content;
+}
+
+.dropdownController {
+	display: flex;
+	padding: 0px;
+	margin: 0px;
+	width: 16px;
+	align-items: center;
+	justify-content: center;
+}
+
+.dropdownController::after {
+	content: '';
+	display: flex;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 24px;
+	height: 24px;
+	background: red;
+}
+
+.moduleConfigHeader {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
 @media (max-width: 1080px) {
 	:root {
+		/* Border Radii */
 		--br-small: 24px;
 		--br-med: 24px;
 		--br-large: 32px;
+
+		/* Sizes */
+		--static-small: 40px;
+		--static-medium: 48px;
+		--static-large: 48px;
+
+		/* Padding */
+		--pad-small: 12px;
+		--pad-medium: 16px;
+		--pad-large: 28px;
 	}
 
 	.modal.login {
@@ -446,17 +525,14 @@ div.fg label {
 	}
 
 	button {
-		height: 50px;
 		font-size: 18px;
 	}
 
 	input {
-		height: 50px;
 		font-size: 24px;
 	}
 
 	select {
-		height: 50px;
 		font-size: 18px;
 	}
 

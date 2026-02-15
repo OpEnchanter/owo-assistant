@@ -39,22 +39,7 @@
 		<div class='card'>
 			<h2>Module Configs</h2>
 			<br>
-			<div class="fg">
-				<h3>Post Processing</h3>
-				<div class="linear">
-					<p>Natural Language Post Processing
-						<div class="info">i
-							<div class="popover">The result of modules will be fed to an LLM to provide more natural responses.<br>NOTE: Requires the LLM module</div>
-						</div>
-					</p>
-					<label class="switch">
-						<input type="checkbox">
-					</label>
-				</div>
-			</div>
-			<form id='moduleConfig'>
-				
-			</form>
+			<form id='moduleConfig'></form>
 		</div>
 
 		<div class="card">
@@ -84,7 +69,10 @@
 
 		<div class="modal" id="newApiKeyModal" style="visibility: hidden;">
 			<h3>New API Key</h3>
-			<p class="fg" style="margin:5px; overflow-x: scroll;" id="apiKey"></p>
+			<div class="apiKeyContainer">
+				<p class="fg" id="apiKey"></p>
+				<button onclick="copyApiKey()" id="copyApiKey">📋</button>
+			</div>
 			<button id="close" style="margin:0px">Done</button>
 		</div>
 
@@ -121,7 +109,7 @@
 				await fetch('/resetApiKey')
 					.then(data => {return data.text();})
 					.then(newKey => {
-						apiKey.innerHTML = '<button onclick="copyApiKey()" class="copy" id="copyApiKey">📋</button>' + newKey;
+						apiKey.innerText = newKey;
 						key = newKey;
 						modal.style.visibility = 'visible';
 						console.log(newKey);

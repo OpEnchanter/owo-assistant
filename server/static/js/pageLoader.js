@@ -9,12 +9,27 @@ async function loadConfigs() {
     await fetch('/exposedParams')
         .then(res => {return res.json()})
         .then(data => {
+            console.log(data);
             for (module in data) {
                 const container = document.createElement('div');
                 container.className = 'fg';
-                const moduleHeader = document.createElement('h3');
-                moduleHeader.innerText = module;
-                container.appendChild(moduleHeader);
+
+                const header = document.createElement('div');
+                header.className = "moduleConfigHeader";
+                    const moduleHeader = document.createElement('h3');
+                    moduleHeader.innerText = module;
+                    header.appendChild(moduleHeader);
+
+                    const dropdownController = document.createElement('input');
+                    dropdownController.className = "dropdownController";
+                    dropdownController.type = "checkbox";
+                    header.appendChild(dropdownController);
+
+                container.appendChild(header);
+
+                const dropdown = document.createElement('div');
+                dropdown.className = "dropdown";
+                
                 Object.keys(data[module]).forEach(field => {
                     const fieldLabel = document.createElement('label');
                     fieldLabel.for = field;
@@ -27,10 +42,51 @@ async function loadConfigs() {
                     fieldInput.setAttribute('data-path', `${module}/${field}`);
                     fieldInput.value = data[module][field]
 
-                    container.appendChild(fieldLabel);
-                    container.appendChild(fieldInput);
+                    dropdown.appendChild(fieldLabel);
+                    dropdown.appendChild(fieldInput);
                 });
+                container.appendChild(dropdown);
                 moduleConfig.appendChild(container)
+            }
+
+            if (Object.keys(data).includes("llm.ts")) {
+                const postProcessingContainer = document.createElement('div');
+                postProcessingContainer.className = "fg";
+
+                    const title = document.createElement("h3");
+                    title.innerText = "Post Processing";
+                    postProcessingContainer.appendChild(title);
+
+                    const row = document.createElement("div");
+                    row.className = "linear";
+
+                        const label = document.createElement("p");
+                        label.innerText = "Natural Language Post Processing"
+                        row.appendChild(label)
+
+                        const info = document.createElement("div");
+                        info.className = "info";
+                            const text = document.createElement("p");
+                            text.innerText = "i";
+                            info.appendChild(text);
+
+                            const popover = document.createElement("div");
+                            popover.className = "popover";
+                            popover.innerText = "The result of modules will be fed to an LLM to provide more natural responses.";
+                            info.appendChild(popover);
+                        row.appendChild(info);
+
+                        const lever = document.createElement("label");
+                        lever.className = "switch"
+                            const checkbox = document.createElement("input")
+                            checkbox.setAttribute("data-path", `test.ts/xyz`);
+                            checkbox.type = "checkbox";
+                            lever.appendChild(checkbox)
+                        row.appendChild(lever);
+
+                    postProcessingContainer.appendChild(row);
+
+                moduleConfig.appendChild(postProcessingContainer);
             }
 
             const submitButton = document.createElement('button');
@@ -165,9 +221,15 @@ moduleConfig.addEventListener('submit', async (e) => {
         if (!Object.keys(data).includes(paths[0])) {
             data[paths[0]] = {};
         }
-
-        data[paths[0]][paths[1]] = e.value;
+        
+        if (e.type === "checkbox") {
+            data[paths[0]][paths[1]] = e.checked;
+        } else {
+            data[paths[0]][paths[1]] = e.value;
+        }
     });
+
+    console.log(data);
 
     await fetch('/updateConfigs', {
         method: "POST",
