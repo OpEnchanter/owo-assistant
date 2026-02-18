@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="chat.css">
+        <title>Chat</title>
+    </head>
+    <body>
+        <a href="/" class="settings">
+            <img src="/images/settings.svg">
+        </a>
+        <div class="messagesContainer">
+            <div class="messages"></div>
+            <div class="fade"></div>
+        </div>
+        <div class="chatbox">
+            <input type="text" id="query" placeholder="Start typing...">
+            <button class="send" id="send">
+                <img src="/images/send.svg">
+            </button>
+        </div>
+
+        <script>
+            const query = document.getElementById("query");
+            document.addEventListener('keydown', (e) => {
+                query.focus();
+
+                if (e.key == 'Enter') {
+                    document.getElementById("send").click();
+                }
+            });
+
+            const messages = document.querySelector(".messages");
+            document.getElementById("send").addEventListener('click', async (e) => {
+                let queryText = query.value;
+                const userMessage = document.createElement("div");
+                userMessage.className = "userMessage";
+                userMessage.innerText = queryText;
+                userMessage.style.transform = "scale(0.75)";
+                messages.appendChild(userMessage);
+                query.value = '';
+                setTimeout(() => {
+                    userMessage.style.transform = "scale(1)";
+                }, 15);
+
+                const loading = document.createElement("div");
+                loading.className = "loading";
+                messages.appendChild(loading);
+                
+                await fetch("/query", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ query:queryText })
+                })
+                    .then(res => { return res.text() })
+                    .then(data => {
+                        loading.remove();
+                        const assistantMessage = document.createElement("div");
+                        assistantMessage.className = "assistantMessage";
+                        assistantMessage.innerText = data;
+                        assistantMessage.style.transform = "scale(0.75)";
+                        messages.appendChild(assistantMessage);
+                        query.value = '';
+                        setTimeout(() => {
+                            assistantMessage.style.transform = "scale(1)";
+                        }, 15);
+                    });
+            });
+        </script>
+    </body>
+</html>

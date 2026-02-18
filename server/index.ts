@@ -209,6 +209,10 @@ app.get("/", (req: Request, res: Response) => {
 	res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+app.get("/chat", (req: Request, res: Response) => {
+	res.sendFile(path.join(__dirname, "public", "chat.html"));
+});
+
 app.get("/loadedModules", (req: Request, res: Response) => {
 	res.send(Object.keys(modules));
 });
