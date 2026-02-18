@@ -126,8 +126,13 @@
 }
 
 .loading {
+    display: block;
+    position: relative;
     width: 8px;
     height: 8px;
+    flex-shrink: 0;
+    flex-grow: 0;
+    box-sizing: border-box;
     border-radius: 100%;
     background: white;
 

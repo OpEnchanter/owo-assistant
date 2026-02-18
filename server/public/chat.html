@@ -45,6 +45,11 @@
                 const loading = document.createElement("div");
                 loading.className = "loading";
                 messages.appendChild(loading);
+
+                messages.scrollTo({
+                    top: messages.scrollHeight,
+                    behavior: "smooth"
+                });
                 
                 await fetch("/query", {
                     method: "POST",
@@ -61,6 +66,10 @@
                         assistantMessage.innerText = data;
                         assistantMessage.style.transform = "scale(0.75)";
                         messages.appendChild(assistantMessage);
+                        messages.scrollTo({
+                            top: messages.scrollHeight,
+                            behavior: "smooth"
+                        });
                         query.value = '';
                         setTimeout(() => {
                             assistantMessage.style.transform = "scale(1)";
