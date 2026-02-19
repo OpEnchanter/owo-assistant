@@ -306,8 +306,6 @@ app.post("/query", async (req: Request, res: Response) => {
 	} else {
 		sID = chatSessionManager.createSession();
 	}
-	console.log(chatMessages);
-	console.log(sID);
 	let finalModuleName = 'None'
 	for (const moduleName of Object.keys(modules)) {
 		const modres = await modules[moduleName].onQuery(requestJson.query.toString(), chatMessages);
