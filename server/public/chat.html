@@ -32,49 +32,50 @@
             const messages = document.querySelector(".messages");
             document.getElementById("send").addEventListener('click', async (e) => {
                 let queryText = query.value;
-                const userMessage = document.createElement("div");
-                userMessage.className = "userMessage";
-                userMessage.innerText = queryText;
-                userMessage.style.transform = "scale(0.75)";
-                messages.appendChild(userMessage);
-                query.value = '';
-                setTimeout(() => {
-                    userMessage.style.transform = "scale(1)";
-                }, 15);
+                if (queryText != '') {
+                    const userMessage = document.createElement("div");
+                    userMessage.className = "userMessage";
+                    userMessage.innerText = queryText;
+                    userMessage.style.transform = "scale(0.1) translateY(64px)";
+                    messages.appendChild(userMessage);
+                    query.value = '';
+                    setTimeout(() => {
+                        userMessage.style.transform = "scale(1) translateY(0)";
+                    }, 15);
 
-                const loading = document.createElement("div");
-                loading.className = "loading";
-                messages.appendChild(loading);
+                    const loading = document.createElement("div");
+                    loading.className = "loading";
+                    messages.appendChild(loading);
 
-                messages.scrollTo({
-                    top: messages.scrollHeight,
-                    behavior: "smooth"
-                });
-                
-                await fetch("/query", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({ query:queryText })
-                })
-                    .then(res => { return res.text() })
-                    .then(data => {
-                        loading.remove();
-                        const assistantMessage = document.createElement("div");
-                        assistantMessage.className = "assistantMessage";
-                        assistantMessage.innerText = data;
-                        assistantMessage.style.transform = "scale(0.75)";
-                        messages.appendChild(assistantMessage);
-                        messages.scrollTo({
-                            top: messages.scrollHeight,
-                            behavior: "smooth"
-                        });
-                        query.value = '';
-                        setTimeout(() => {
-                            assistantMessage.style.transform = "scale(1)";
-                        }, 15);
+                    messages.scrollTo({
+                        top: messages.scrollHeight,
+                        behavior: "smooth"
                     });
+                    
+                    await fetch("/query", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ query:queryText })
+                    })
+                        .then(res => { return res.text() })
+                        .then(data => {
+                            const assistantMessage = document.createElement("div");
+                            assistantMessage.className = "assistantMessage";
+                            assistantMessage.innerText = data;
+                            assistantMessage.style.transform = "scale(0.1) translateY(64px)";
+                            loading.replaceWith(assistantMessage);
+                            messages.scrollTo({
+                                top: messages.scrollHeight,
+                                behavior: "smooth"
+                            });
+                            query.value = '';
+                            setTimeout(() => {
+                                assistantMessage.style.transform = "scale(1) translateY(0)";
+                            }, 15);
+                        });
+                }
             });
         </script>
     </body>

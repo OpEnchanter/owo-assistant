@@ -107,7 +107,7 @@
             color: black;
             margin-bottom: 16px;
 
-            transition: all 75ms ease-out;
+            transition: all 150ms ease-out;
         }
 
         .assistantMessage {
@@ -120,7 +120,7 @@
             color: black;
             margin-bottom: 16px;
 
-            transition: all 75ms ease-out;
+            transition: all 150ms ease-out;
         }
     }
 }
