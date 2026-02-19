@@ -1,5 +1,6 @@
 import { OwODB } from 'owodb';
 import { ModuleBase, type ModuleResult } from 'owomodule'
+import { type ChatMessage } from 'chatsession';
 import chalk from 'chalk';
 
 interface ModuleData {
@@ -55,7 +56,7 @@ export class Module extends ModuleBase {
 	    return ['ollamaUrl', 'openAIApiKey', 'anthropicApiKey', 'modelId', 'systemPrompt']
 	}
 
-	public override async onQuery(query: String): Promise<ModuleResult> {
+	public override async onQuery(query: String, messages: ChatMessage[]): Promise<ModuleResult> {
 		const moduleData = this.db.getModuleData('llm.ts', ['ollamaUrl', 'openAIApiKey', 'anthropicApiKey', 'modelId', 'systemPrompt']) as ModuleData;
 
 		let response = ''
@@ -80,6 +81,23 @@ export class Module extends ModuleBase {
 		}
 		
 		if (moduleData.openAIApiKey != '') {
+			let conversation = [];
+			for(let message of messages) {
+				conversation.push({
+					role: "user",
+					content: message.userMessage
+				});
+				conversation.push({
+					role: "assistant",
+					content: message.assistantMessage
+				});
+			}
+
+			conversation.push({
+				role: "user",
+				content: query
+			});
+
 			console.log(`[LLM] ${chalk.green('Making request to OpenAI')}`);
 			const res = await fetch(`https://api.openai.com/v1/responses`, {
 				method: "POST",
@@ -89,7 +107,7 @@ export class Module extends ModuleBase {
 				},
 				body: JSON.stringify({
 					"model": moduleData.modelId,
-					"input": query
+					"input": conversation
 				})
 			});
 
@@ -107,6 +125,23 @@ export class Module extends ModuleBase {
 		}
 
 		if (moduleData.anthropicApiKey != '') {
+			let conversation = [];
+			for(let message of messages) {
+				conversation.push({
+					role: "user",
+					content: message.userMessage
+				});
+				conversation.push({
+					role: "assistant",
+					content: message.assistantMessage
+				});
+			}
+
+			conversation.push({
+				role: "user",
+				content: query
+			});
+
 			console.log(`[LLM] ${chalk.green('Making request to Anthropic')}`);
 			const res = await fetch("https://api.anthropic.com/v1/messages", {
 				method: "POST",
@@ -118,7 +153,7 @@ export class Module extends ModuleBase {
 				body: JSON.stringify({
 					"model": moduleData.modelId,
 					"max_tokens": 1024,
-					"messages": [{"role":"user", "content":query}]
+					"messages": conversation
 				})
 			});
 

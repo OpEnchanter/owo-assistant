@@ -1,5 +1,6 @@
 import { ModuleBase,  type ModuleResult } from "owomodule"
 import { OwODB } from "owodb";
+import { type ChatMessage } from "chatsession";
 import chalk from 'chalk';
 
 type LightAction = (entityId: string, subaction: string, value: string) => Promise<any>;
@@ -79,7 +80,7 @@ export class Module extends ModuleBase {
 		return exParams;
 	}
 
-    public override async onQuery(query: String): Promise<ModuleResult> {
+    public override async onQuery(query: String, messages: ChatMessage[]): Promise<ModuleResult> {
         const moduleData = this.db.getModuleData("homeassistant.ts", ['hatoken', 'haurl']) as ModuleData;
         const token = moduleData.hatoken;
         const haUrl = moduleData.haurl;

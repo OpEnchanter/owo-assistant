@@ -8,6 +8,7 @@ import session, { type SessionData } from 'express-session';
 import * as crypto from 'crypto';
 import { password } from "bun";
 import { processResult } from "post-processing/llm";
+import { ChatSessionManager, ChatSession, type ChatMessage } from "chatsession";
 
 interface Statistics {
 	totalQueries: number,
@@ -28,6 +29,8 @@ interface PostProcessingData {
 const db: OwODB = new OwODB("./data/owodb.sqlite");
 
 // Initialize app
+const chatSessionManager: ChatSessionManager = new ChatSessionManager();
+
 let sessionSecret = '';
 try {
 	sessionSecret = db.getGlobalData('sessionSecret');
@@ -72,6 +75,7 @@ const PORT = 8080;
 
 interface RequestInterface {
     query: String,
+	sessionID?: string
 }
 
 // Initialize Modules
@@ -294,9 +298,19 @@ app.post("/query", async (req: Request, res: Response) => {
 	let response: String = 'Sorry, I was unable to process your request.';
 	let postProcessingEnabled = true;
     let requestJson = req.body as RequestInterface;
+	let chatMessages: ChatMessage[] = [];
+	let sID: string = '';
+	if (Object.hasOwn(requestJson, "sessionID")) {
+		chatMessages = chatSessionManager.getSessionMessages(requestJson.sessionID);
+		sID = requestJson.sessionID;
+	} else {
+		sID = chatSessionManager.createSession();
+	}
+	console.log(chatMessages);
+	console.log(sID);
 	let finalModuleName = 'None'
 	for (const moduleName of Object.keys(modules)) {
-		const modres = await modules[moduleName].onQuery(requestJson.query.toString());
+		const modres = await modules[moduleName].onQuery(requestJson.query.toString(), chatMessages);
 		if (modres.endRequest) {
 			response = modres.response;
 			if (Object.hasOwn(modres, "allowPostProcessing")) {
@@ -334,7 +348,9 @@ app.post("/query", async (req: Request, res: Response) => {
 	
 	db.setGlobalData('statistics', JSON.stringify(statistics));
 
-	res.send(response);
+	chatSessionManager.addSessionMessage(sID, requestJson.query as string, response as string);
+
+	res.send(JSON.stringify({response:response, sessionID:sID}));
 });
 
 app.listen(PORT, () => {

@@ -1,4 +1,5 @@
 import { OwODB } from "owodb";
+import { type ChatMessage } from "chatsession";
 
 export interface ModuleResult {
     endRequest: boolean,
@@ -16,7 +17,7 @@ export class ModuleBase {
 		return [];
 	}
 
-    public async onQuery(query: String): Promise<ModuleResult> {
+    public async onQuery(query: String, messages: ChatMessage[]): Promise<ModuleResult> {
         return {endRequest: false, response: ""} as ModuleResult;
     }
 }

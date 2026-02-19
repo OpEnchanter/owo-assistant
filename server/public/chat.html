@@ -29,6 +29,8 @@
                 }
             });
 
+            let sessionID = '';
+
             const messages = document.querySelector(".messages");
             document.getElementById("send").addEventListener('click', async (e) => {
                 let queryText = query.value;
@@ -51,19 +53,25 @@
                         top: messages.scrollHeight,
                         behavior: "smooth"
                     });
+
+                    let requestData = { query:queryText };
+                    if (sessionID !== '') {
+                        requestData.sessionID = sessionID;
+                    }
                     
                     await fetch("/query", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
                         },
-                        body: JSON.stringify({ query:queryText })
+                        body: JSON.stringify(requestData)
                     })
-                        .then(res => { return res.text() })
+                        .then(res => { return res.json() })
                         .then(data => {
+                            sessionID = data.sessionID;
                             const assistantMessage = document.createElement("div");
                             assistantMessage.className = "assistantMessage";
-                            assistantMessage.innerText = data;
+                            assistantMessage.innerText = data.response;
                             assistantMessage.style.transform = "scale(0.1) translateY(64px)";
                             loading.replaceWith(assistantMessage);
                             messages.scrollTo({
