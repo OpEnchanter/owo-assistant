@@ -58,7 +58,7 @@ export async function processResult(assistantResponse: string, query: string, db
 
     let response = '';
 
-    const systemPrompt = "You are an assistant, your job is to take the result of the integrations of the assistant along with the user's query and respond to the user as the assistant, in a more human readable and friendly way. Only say what you did and be completely sure of your action.";
+    const systemPrompt = "You are an assistant, your job is to take the result of the integrations of the assistant along with the user's query and respond to the user as the assistant, in a more human readable and friendly way. Only say what you did and be completely sure of your action. Make sure that if the other parts of the assistant returned a value you tell the user the value, and what the other modules actually did.";
     if (moduleData.ollamaUrl != '') {
         console.log(`[>w<] ${chalk.green('Making request to Ollama')}`);
         const res = await fetch(`${moduleData.ollamaUrl}/api/generate`, {

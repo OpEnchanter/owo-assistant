@@ -19,8 +19,6 @@
 	--error: oklch(75% 0.05 0);
 	--info: oklch(75% 0.05 315);
 
-	--highlight: oklch(65% 0.01 245);
-
 	/* Borders */
 	--br-small: 12px;
 	--br-med: 16px;

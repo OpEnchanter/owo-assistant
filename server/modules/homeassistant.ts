@@ -3,10 +3,10 @@ import { OwODB } from "owodb";
 import { type ChatMessage } from "chatsession";
 import chalk from 'chalk';
 
-type LightAction = (entityId: string, subaction: string, value: string) => Promise<any>;
+type HomeAction = (entityName: string, entityId: string, subaction: string, value: string) => Promise<any>;
 
 interface SmartHomeActions {
-    [key: string]: LightAction
+    [key: string]: HomeAction
 }
 
 interface HAState {
@@ -48,12 +48,32 @@ export class Module extends ModuleBase {
 
         const states: HAState[] = await res.json() as HAState[];
 
+        console.log(states);
+
         return states.reduce((acc: Record<string, string>, item: HAState) => {
             let name: string = item.attributes.friendly_name as string;
             name = name.replaceAll(/\p{P}/gu, '').toLowerCase();
             acc[name] = item.entity_id;
             return acc;
         }, {});
+    }
+
+    private async getDeviceState(deviceID: string) {
+        const moduleData = this.db.getModuleData("homeassistant.ts") as ModuleData;
+        const token = moduleData.hatoken;
+		const haUrl = moduleData.haurl;
+        
+        const res = await fetch(`${haUrl}/api/states/${deviceID}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        const deviceState = await res.json();
+
+        return deviceState;
     }
 
     private async haPost(bodyJson: Object, endpoint: string) {
@@ -113,19 +133,21 @@ export class Module extends ModuleBase {
         }
 
         const actions: SmartHomeActions = {
-            'turn on': async (entityId: string, subaction: string, value: string) => {
+            'turn on': async (entityName: string, entityId: string, subaction: string, value: string) => {
                 let body = {
                     entity_id: entityId
                 };
                 await this.haPost(body, "/api/services/light/turn_on");
+                return `Turned on ${entityName}!`;
             }, 
-            'turn off': async (entityId: string, subaction: string, value: string) => {
+            'turn off': async (entityName: string, entityId: string, subaction: string, value: string) => {
                 let body = {
                     entity_id: entityId
                 };
                 await this.haPost(body, "/api/services/light/turn_off");
+                return `Turned off ${entityName}!`;
             },
-            'set': async (entityId: string, subaction: string, value: string) => {
+            'set': async (entityName: string, entityId: string, subaction: string, value: string) => {
                 let attrib = attribMap[subaction];
 
                 let convertedValue: any = value;
@@ -145,7 +167,18 @@ export class Module extends ModuleBase {
 
                     await this.haPost(body, "/api/services/light/turn_on");
                 }
-            }  
+                return `Done!`
+            },
+            'value': async (entityName: string, entityId: string, subaction: string, value: string) => {
+                const dState = await this.getDeviceState(entityId);
+                console.log(dState);
+                const attributes = dState.attributes;
+                let unit_of_measurement = '';
+                if (Object.hasOwn(attributes, "unit_of_measurement")) {
+                    unit_of_measurement = dState.attributes.unit_of_measurement.toString()
+                }
+                return `${dState.state.toString()}${unit_of_measurement}`;
+            }
         };
 
         const ignoredWords = [' the', ' please', ' thank you', ' to']
@@ -202,22 +235,14 @@ export class Module extends ModuleBase {
                 const entityId = haDevices[entityName];
 
                 if (actions[actionName] && entityId) {
-                    actions[actionName](entityId, subaction, value);
+                    response = await actions[actionName](entityName, entityId, subaction, value);
                 }
 
-                if (actionName == 'turn on') {
-                    response = `Turned on ${entityName}!`
-                } else if (actionName == 'turn off') {
-                    response = `Turned off ${entityName}!`
-                } else {
-                    response = 'Ok!'
-                }
+                console.log(response);
 
                 if (entityId) {
                     return {response: response, endRequest: isHACommand} as ModuleResult;
                 }
-
-                
             }
         }
 
