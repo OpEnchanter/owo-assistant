@@ -31,6 +31,7 @@ COPY --from=prerelease /usr/src/app/public ./public
 COPY --from=prerelease /usr/src/app/static ./static
 COPY --from=prerelease /usr/src/app/modules ./modules
 COPY --from=prerelease /usr/src/app/libs ./libs
+COPY --from=prerelease /usr/src/app/post-processing ./post-processing
 
 RUN mkdir /usr/src/app/data
 RUN chown -R bun:bun ./
