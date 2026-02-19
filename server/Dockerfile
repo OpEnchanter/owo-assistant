@@ -33,9 +33,6 @@ COPY --from=prerelease /usr/src/app/modules ./modules
 COPY --from=prerelease /usr/src/app/libs ./libs
 COPY --from=prerelease /usr/src/app/post-processing ./post-processing
 
-RUN mkdir /usr/src/app/data
-RUN chown -R bun:bun ./
-
 # run the app
 USER bun
 EXPOSE 8080/tcp
