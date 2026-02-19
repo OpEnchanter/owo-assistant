@@ -60,7 +60,7 @@ export async function processResult(assistantResponse: string, query: string, db
 
     const systemPrompt = "You are an assistant, your job is to take the result of the integrations of the assistant along with the user's query and respond to the user as the assistant, in a more human readable and friendly way. Only say what you did and be completely sure of your action.";
     if (moduleData.ollamaUrl != '') {
-        console.log(`[LLM] ${chalk.green('Making request to Ollama')}`);
+        console.log(`[>w<] ${chalk.green('Making request to Ollama')}`);
         const res = await fetch(`${moduleData.ollamaUrl}/api/generate`, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -79,7 +79,7 @@ export async function processResult(assistantResponse: string, query: string, db
     }
     
     if (moduleData.openAIApiKey != '') {
-        console.log(`[LLM] ${chalk.green('Making request to OpenAI')}`);
+        console.log(`[>w<] ${chalk.green('Making request to OpenAI')}`);
         const res = await fetch(`https://api.openai.com/v1/responses`, {
             method: "POST",
             headers: {
@@ -115,7 +115,7 @@ export async function processResult(assistantResponse: string, query: string, db
     }
 
     if (moduleData.anthropicApiKey != '') {
-        console.log(`[LLM] ${chalk.green('Making request to Anthropic')}`);
+        console.log(`[>w<] ${chalk.green('Making request to Anthropic')}`);
         const res = await fetch("https://api.anthropic.com/v1/messages", {
             method: "POST",
             headers: {
@@ -139,7 +139,7 @@ export async function processResult(assistantResponse: string, query: string, db
         }
     }
 
-    console.log(`[LLM] [${chalk.red('ERROR')}] ${chalk.bgRed(' NO LLM PROVIDER ')}`);
+    console.log(`[>w<] [${chalk.red('ERROR')}] ${chalk.bgRed(' NO LLM PROVIDER ')}`);
     response = "You have no LLM provider set up!"
     return response;
 }

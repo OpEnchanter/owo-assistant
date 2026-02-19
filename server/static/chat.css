@@ -99,7 +99,7 @@
 
         .userMessage {
             display: flex;
-            background: var(--info);
+            background: var(--user-color);
             border-radius: 16px;
             border-bottom-right-radius: 4px;
             margin-left: auto;
@@ -112,7 +112,7 @@
 
         .assistantMessage {
             display: flex;
-            background: var(--success);
+            background: var(--assistant-color);
             border-radius: 16px;
             border-bottom-left-radius: 4px;
             margin-right: auto;
@@ -134,7 +134,7 @@
     flex-grow: 0;
     box-sizing: border-box;
     border-radius: 100%;
-    background: white;
+    background: var(--text-muted);
 
     animation-name: loading;
     animation-duration: 500ms;

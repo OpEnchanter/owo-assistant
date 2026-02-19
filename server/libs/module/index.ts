@@ -3,6 +3,7 @@ import { OwODB } from "owodb";
 export interface ModuleResult {
     endRequest: boolean,
     response: String,
+    allowPostProcessing?: boolean
 }
 
 export class ModuleBase {

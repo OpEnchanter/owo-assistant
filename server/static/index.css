@@ -33,6 +33,10 @@
 	--pad-small: 4px;
 	--pad-medium: 8px;
 	--pad-large: 16px;
+
+	/* Chat Specific Colors */
+    --user-color: oklch(65% 0.03 315);
+    --assistant-color: oklch(65% 0.03 165);
 }
 
 body {

@@ -292,21 +292,27 @@ app.get("/statistics", (req: Request, res: Response) => {
 
 app.post("/query", async (req: Request, res: Response) => {
 	let response: String = 'Sorry, I was unable to process your request.';
+	let postProcessingEnabled = true;
     let requestJson = req.body as RequestInterface;
 	let finalModuleName = 'None'
 	for (const moduleName of Object.keys(modules)) {
 		const modres = await modules[moduleName].onQuery(requestJson.query.toString());
 		if (modres.endRequest) {
 			response = modres.response;
+			if (Object.hasOwn(modres, "allowPostProcessing")) {
+				postProcessingEnabled = modres.allowPostProcessing as boolean;
+			}
 			finalModuleName = moduleName;
 			break;
 		}
 	}
 
 	// Response post-processing
-	const postProcessingData = db.getModuleData('postProcessing', ["naturalLanguageEnabled", "naturalLanguageModel"]) as PostProcessingData;
-	if (postProcessingData.naturalLanguageEnabled) {
-		response = await processResult(response.toString(), requestJson.query.toString(), db);
+	if (postProcessingEnabled) {
+		const postProcessingData = db.getModuleData('postProcessing', ["naturalLanguageEnabled", "naturalLanguageModel"]) as PostProcessingData;
+		if (postProcessingData.naturalLanguageEnabled) {
+			response = await processResult(response.toString(), requestJson.query.toString(), db);
+		}
 	}
 
 	// Statistics

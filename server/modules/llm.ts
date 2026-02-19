@@ -76,7 +76,7 @@ export class Module extends ModuleBase {
 			const data: OllamaResponse = await res.json() as OllamaResponse;
 			response = data.response;
 
-			return {response: response, endRequest: true} as ModuleResult;
+			return {response: response, endRequest: true, allowPostProcessing: false} as ModuleResult;
 		}
 		
 		if (moduleData.openAIApiKey != '') {
@@ -102,7 +102,7 @@ export class Module extends ModuleBase {
 					}
 				});
 
-				return {response: response, endRequest: true} as ModuleResult;
+				return {response: response, endRequest: true, allowPostProcessing: false} as ModuleResult;
 			}
 		}
 
@@ -126,7 +126,7 @@ export class Module extends ModuleBase {
 			if (Object.hasOwn(data, "content")) {
 				response = data.content[0].text;
 
-				return {response: response, endRequest: true} as ModuleResult;
+				return {response: response, endRequest: true, allowPostProcessing: false} as ModuleResult;
 			}
 		}
 
