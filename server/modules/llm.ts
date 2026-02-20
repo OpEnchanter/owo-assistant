@@ -131,10 +131,6 @@ export class Module extends ModuleBase {
 
 		if (moduleData.anthropicApiKey != '') {
 			let conversation = [];
-			conversation.push({
-				role: "system",
-				content: moduleData.systemPrompt
-			});
 			for(let message of messages) {
 				conversation.push({
 					role: "user",
@@ -162,6 +158,7 @@ export class Module extends ModuleBase {
 				body: JSON.stringify({
 					"model": moduleData.modelId,
 					"max_tokens": 1024,
+					"system": moduleData.systemPrompt,
 					"messages": conversation
 				})
 			});
