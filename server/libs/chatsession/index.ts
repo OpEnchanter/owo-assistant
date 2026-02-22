@@ -19,6 +19,10 @@ export class ChatSessionManager {
         return messages;
     }
 
+    public sessionExists(sessionID: string): boolean {
+        return Object.hasOwn(this.sessions, sessionID);
+    }
+
     public removeSession(sessionID: string) {
         delete this.sessions[sessionID];
     }

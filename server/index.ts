@@ -300,7 +300,7 @@ app.post("/query", async (req: Request, res: Response) => {
     let requestJson = req.body as RequestInterface;
 	let chatMessages: ChatMessage[] = [];
 	let sID: string = '';
-	if (Object.hasOwn(requestJson, "sessionID")) {
+	if (Object.hasOwn(requestJson, "sessionID") && chatSessionManager.sessionExists(requestJson.sessionID)) {
 		chatMessages = chatSessionManager.getSessionMessages(requestJson.sessionID);
 		sID = requestJson.sessionID;
 	} else {
