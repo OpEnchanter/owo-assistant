@@ -140,12 +140,20 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
 	const requestKeyHashed = Bun.CryptoHasher.hash('sha256', requestKey as string).toString('hex');
 
 	if (!appInitialized) {
-		res.redirect('/newInstance');
+		if (Object.hasOwn(req.headers, 'x-api-key')) {
+			res.status(404).send("Instance unitialized! Please up the application!");
+		} else {
+			res.redirect('/newInstance');
+		}
 	} else {
 		if (requestKeyHashed === apiKey || (req.session as CustomSessionData).authenticated) {
 			next();
 		} else {
-			res.redirect('/login');
+			if (Object.hasOwn(req.headers, 'x-api-key')) {
+				res.status(404).send("You are not authorized!");
+			} else {
+				res.redirect('/login');
+			}
 		}
 	}	
 };

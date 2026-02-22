@@ -35,8 +35,9 @@ public class ServerIntegration {
     private OkHttpClient client;
     private String server;
     private String apiKey;
+    private TextView authError;
 
-    public ServerIntegration(Debug debug, String server, String apiKey) {
+    public ServerIntegration(Debug debug, String server, String apiKey, TextView authenticationError) {
         client = new OkHttpClient.Builder()
                 .connectTimeout(Duration.ofMillis(1500))
                 .readTimeout(Duration.ofMinutes(2))
@@ -45,6 +46,7 @@ public class ServerIntegration {
         this.debug = debug;
         this.server = server;
         this.apiKey = apiKey;
+        this.authError = authenticationError;
     }
 
     public String postQuery(String query, TextView responseView, View responseWindow, String sID, AppCompatActivity activity) {
@@ -71,29 +73,37 @@ public class ServerIntegration {
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
                 debug.write("Error: Request to server failed; " + response.code());
+
+                authError.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        authError.setVisibility(View.VISIBLE);
+                    }
+                });
+            } else {
+                // Parse response from server as JSON and set responseView text
+                JSONObject responseObject = new JSONObject(response.body().string());
+
+                Markwon markwon = Markwon.builder(activity)
+                        .usePlugin(StrikethroughPlugin.create())
+                        .usePlugin(TaskListPlugin.create(activity))
+                        .usePlugin(TablePlugin.create(activity))
+                        .build();
+
+                markwon.setMarkdown(responseView, responseObject.getString("response"));
+                responseView.setVisibility(View.VISIBLE);
+
+                debug.write(responseObject.getString("response"));
+                responseView.getLineCount();
+                responseWindow.animate()
+                        .scaleY(1f)
+                        .translationY(160f)
+                        .setDuration(150);
+
+                return responseObject.getString("sessionID");
             }
-
-            // Parse response from server as JSON and set responseView text
-            JSONObject responseObject = new JSONObject(response.body().string());
-
-            Markwon markwon = Markwon.builder(activity)
-                    .usePlugin(StrikethroughPlugin.create())
-                    .usePlugin(TaskListPlugin.create(activity))
-                    .usePlugin(TablePlugin.create(activity))
-                    .build();
-
-            markwon.setMarkdown(responseView, responseObject.getString("response"));
-
-            debug.write(responseObject.getString("response"));
-            responseView.getLineCount();
-            responseWindow.animate()
-                    .scaleY(1f)
-                    .translationY(160f)
-                    .setDuration(150);
-
-            return responseObject.getString("sessionID");
         } catch (Exception e) {
-            debug.write("Error: Request to server failed; " + Log.getStackTraceString(e));
+            //debug.write("Error: Request to server failed; " + Log.getStackTraceString(e));
             e.printStackTrace();
         }
 

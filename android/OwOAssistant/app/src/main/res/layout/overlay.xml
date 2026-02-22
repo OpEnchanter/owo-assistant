@@ -9,13 +9,27 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/authError"
+        android:layout_width="256dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="48dp"
+        android:background="@drawable/error_notification"
+        android:gravity="center_horizontal|center_vertical"
+        android:text="Authentication Failed!"
+        android:textSize="16sp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/debugLabel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Debug"
+        android:text="DEBUG MODE"
         android:textSize="20sp"
-        android:translationY="75dp"
+        android:translationY="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

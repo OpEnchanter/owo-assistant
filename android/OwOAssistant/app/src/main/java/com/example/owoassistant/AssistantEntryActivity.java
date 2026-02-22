@@ -95,6 +95,9 @@ public class AssistantEntryActivity extends AppCompatActivity {
         TextView responseView = findViewById(R.id.response);
         View responseWindow = findViewById(R.id.responseWindow);
         View voiceButton = findViewById(R.id.speechButton);
+        TextView authenticationError = findViewById(R.id.authError);
+
+        authenticationError.setVisibility(View.INVISIBLE);
 
         userInputContainer.setFocusable(true);
         userInputContainer.setClickable(true);
@@ -105,6 +108,8 @@ public class AssistantEntryActivity extends AppCompatActivity {
         responseView.setClickable(true);
         responseView.setOnClickListener(l -> {
         });
+
+        responseView.setVisibility(View.GONE);
 
         responseView.setMovementMethod(new ScrollingMovementMethod());
         responseView.setVerticalScrollBarEnabled(true);
@@ -119,7 +124,7 @@ public class AssistantEntryActivity extends AppCompatActivity {
         });
 
         Debug debug = new Debug(debugView);
-        ServerIntegration serverIntegration = new ServerIntegration(debug, prefs.getString("backendUrl", ""), prefs.getString("apiKey", ""));
+        ServerIntegration serverIntegration = new ServerIntegration(debug, prefs.getString("backendUrl", ""), prefs.getString("apiKey", ""), authenticationError);
 
         String[] hints = {
                 "Ask me anything!",
@@ -131,18 +136,13 @@ public class AssistantEntryActivity extends AppCompatActivity {
 
         input.addTextChangedListener(new TextWatcher() {
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-
+            public void afterTextChanged(Editable s) {}
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 stopListening(input, voiceButton);
+                voiceButton.setVisibility(View.INVISIBLE);
             }
         });
 

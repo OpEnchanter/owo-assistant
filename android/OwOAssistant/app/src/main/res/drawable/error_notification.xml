@@ -1,27 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <!-- Glow layer (bigger + translucent) -->
     <item>
         <shape android:shape="rectangle">
             <gradient
-                android:startColor="#7b8186"
-                android:endColor="#43484d"
+                android:startColor="#FFAB9C"
+                android:endColor="#CF0B1C"
                 android:angle="-90"/>
-            <corners android:radius="400dp"/>
+            <corners android:radius="4000dp" />
             <padding
                 android:left="2dp"
                 android:top="2dp"
-                android:right="2dp"
-                android:bottom="2dp"/>
+                android:bottom="2dp"
+                android:right="2dp"/>
         </shape>
     </item>
 
-    <!-- Main box -->
     <item android:left="0.05dp" android:top="0.05dp" android:right="0.05dp" android:bottom="0.05dp">
         <shape android:shape="rectangle">
-            <solid android:color="#2a2e33"/>
-            <corners android:radius="400dp"/>
+            <solid android:color="#EF3B4C" />
+            <corners android:radius="4000dp" />
         </shape>
     </item>
-
 </layer-list>
