@@ -9,6 +9,7 @@ import android.widget.TextView;
 import org.json.JSONObject;
 
 import java.time.Duration;
+import java.util.Objects;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -33,10 +34,13 @@ public class ServerIntegration {
         this.apiKey = apiKey;
     }
 
-    public void postQuery(String query, TextView responseView, View responseWindow) {
+    public String postQuery(String query, TextView responseView, View responseWindow, String sID) {
         JSONObject bodyJson = new JSONObject();
         try {
             bodyJson.put("query", query);
+            if (!Objects.equals(sID, "")) {
+                bodyJson.put("sessionID", sID);
+            }
         } catch (Exception e) {
             debug.write("JSON Error");
         }
@@ -56,17 +60,22 @@ public class ServerIntegration {
                 debug.write("Error: Request to server failed; " + response.code());
             }
 
-            responseView.setText(response.body().string());
+            JSONObject responseObject = new JSONObject(response.body().string());
+            responseView.setText(responseObject.getString("response"));
+
+            debug.write(responseObject.getString("response"));
             responseView.getLineCount();
             responseWindow.animate()
                     .scaleY(1f)
                     .translationY(160f)
                     .setDuration(150);
 
-
+            return responseObject.getString("sessionID");
         } catch (Exception e) {
             debug.write("Error: Request to server failed; " + Log.getStackTraceString(e));
             e.printStackTrace();
         }
+
+        return "";
     }
 }

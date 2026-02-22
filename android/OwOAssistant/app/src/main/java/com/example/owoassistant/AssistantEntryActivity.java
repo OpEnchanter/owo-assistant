@@ -25,6 +25,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class AssistantEntryActivity extends AppCompatActivity {
 
@@ -38,6 +39,8 @@ public class AssistantEntryActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AtomicReference<String> sID = new AtomicReference<>("");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.overlay);
 
@@ -82,18 +85,31 @@ public class AssistantEntryActivity extends AppCompatActivity {
                 }
         );
 
+        View sendButton = findViewById(R.id.button);
+        TextView input = findViewById(R.id.query);
+        TextView debugView = findViewById(R.id.debug);
+        TextView debugLabel = findViewById(R.id.debugLabel);
+        TextView responseView = findViewById(R.id.response);
+        View responseWindow = findViewById(R.id.responseWindow);
+
+        userInputContainer.setFocusable(true);
+        userInputContainer.setClickable(true);
         userInputContainer.setOnClickListener(l -> {
+        });
+
+        responseView.setFocusable(true);
+        responseView.setClickable(true);
+        responseView.setOnClickListener(l -> {
+        });
+
+        userInputContainer.setClickable(true);
+        debugView.setOnClickListener(l -> {
         });
 
         View backdrop = findViewById(R.id.userInteraction);
         backdrop.setOnClickListener(l -> {
             finish();
         });
-
-        View sendButton = findViewById(R.id.button);
-        TextView input = findViewById(R.id.query);
-        TextView debugView = findViewById(R.id.debug);
-        TextView debugLabel = findViewById(R.id.debugLabel);
 
         Debug debug = new Debug(debugView);
         ServerIntegration serverIntegration = new ServerIntegration(debug, prefs.getString("backendUrl", ""), prefs.getString("apiKey", ""));
@@ -116,8 +132,6 @@ public class AssistantEntryActivity extends AppCompatActivity {
 
         debugView.setText("Backend URL: " + prefs.getString("backendUrl", ""));
 
-        TextView responseView = findViewById(R.id.response);
-        View responseWindow = findViewById(R.id.responseWindow);
         responseWindow.setScaleY(0f);
         responseWindow.setTranslationY(density * (273/2));
         debugView.setMovementMethod(new ScrollingMovementMethod());
@@ -129,7 +143,7 @@ public class AssistantEntryActivity extends AppCompatActivity {
 
             // Make HTTP request
             new Thread(() -> {
-                serverIntegration.postQuery(query, responseView, responseWindow);
+                sID.set(serverIntegration.postQuery(query, responseView, responseWindow, sID.get()));
             }).start();
         });
 
@@ -149,7 +163,7 @@ public class AssistantEntryActivity extends AppCompatActivity {
 
                 // Make HTTP request
                 new Thread(() -> {
-                    serverIntegration.postQuery(query, responseView, responseWindow);
+                    sID.set(serverIntegration.postQuery(query, responseView, responseWindow, sID.get()));
                 }).start();
 
                 permissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
