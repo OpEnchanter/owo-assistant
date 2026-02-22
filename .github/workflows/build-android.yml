@@ -52,7 +52,14 @@ jobs:
           files: android/OwOAssistant/app/build/outputs/apk/release/owo-assistant.apk
           tag_name: "build-${{ github.run_number }}"
           name: "Build #${{ github.run_number }}"
-          body: "Automated android client build (commit: ${{ github.sha }})"
+          body: |
+            *Automated android client build (commit: ${{ github.sha }})*
+            **Client Installation**
+            1. Download the APK
+            2. Open the APK on your Android device and tap install
+
+            **Server Installation**
+            1. Follow the installation instructions in the [README](https://github.com/OpEnchanter/owo-assistant/blob/main/README.md)
           draft: false
           prerelease: false
         env:
