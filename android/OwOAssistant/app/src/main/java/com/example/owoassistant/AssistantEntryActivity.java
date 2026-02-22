@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.TextView;
@@ -31,8 +33,9 @@ public class AssistantEntryActivity extends AppCompatActivity {
 
     private final ActivityResultLauncher<String> permissionLauncher =
             registerForActivityResult(new ActivityResultContracts.RequestPermission(),
-                    granted -> { if (granted) startListening(); });
+                    granted -> { if (!granted) {speechAllowed = false;} });
 
+    private boolean speechAllowed = true;
     private SpeechRecognizer speech;
     private boolean isListening;
     String lastPartialText = "";
@@ -91,6 +94,7 @@ public class AssistantEntryActivity extends AppCompatActivity {
         TextView debugLabel = findViewById(R.id.debugLabel);
         TextView responseView = findViewById(R.id.response);
         View responseWindow = findViewById(R.id.responseWindow);
+        View voiceButton = findViewById(R.id.speechButton);
 
         userInputContainer.setFocusable(true);
         userInputContainer.setClickable(true);
@@ -101,6 +105,9 @@ public class AssistantEntryActivity extends AppCompatActivity {
         responseView.setClickable(true);
         responseView.setOnClickListener(l -> {
         });
+
+        responseView.setMovementMethod(new ScrollingMovementMethod());
+        responseView.setVerticalScrollBarEnabled(true);
 
         userInputContainer.setClickable(true);
         debugView.setOnClickListener(l -> {
@@ -121,6 +128,23 @@ public class AssistantEntryActivity extends AppCompatActivity {
                 "Welcome back!",
         };
         input.setHint(hints[(int) Math.round(Math.random() * (hints.length - 1))]);
+
+        input.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                stopListening(input, voiceButton);
+            }
+        });
 
         debugView.setTextAlignment(TEXT_ALIGNMENT_CENTER);
         debugView.setMovementMethod(new android.text.method.ScrollingMovementMethod());
@@ -143,11 +167,11 @@ public class AssistantEntryActivity extends AppCompatActivity {
 
             // Make HTTP request
             new Thread(() -> {
-                sID.set(serverIntegration.postQuery(query, responseView, responseWindow, sID.get()));
+                sID.set(serverIntegration.postQuery(query, responseView, responseWindow, sID.get(), this));
             }).start();
         });
 
-        View voiceButton = findViewById(R.id.speechButton);
+        AppCompatActivity activity = this;
 
         speech = SpeechRecognizer.createSpeechRecognizer(this);
         speech.setRecognitionListener(new RecognitionListener() {
@@ -163,14 +187,15 @@ public class AssistantEntryActivity extends AppCompatActivity {
 
                 // Make HTTP request
                 new Thread(() -> {
-                    sID.set(serverIntegration.postQuery(query, responseView, responseWindow, sID.get()));
+                    sID.set(serverIntegration.postQuery(query, responseView, responseWindow, sID.get(), activity));
                 }).start();
 
                 permissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
             }
             public void onError(int error) {
-                voiceButton.setBackgroundTintList(ColorStateList.valueOf(0xFF2C2C2C));
+                voiceButton.setBackgroundTintList(ColorStateList.valueOf(0xFFDF2C2C));
                 input.setHint("Type...");
+                stopListening(input, voiceButton);
             }
             // Empty implementations for other required methods
             public void onReadyForSpeech(Bundle params) {}
@@ -204,28 +229,37 @@ public class AssistantEntryActivity extends AppCompatActivity {
             toggleListening(input, voiceButton);
         });
 
-        toggleListening(input, voiceButton);
+        debug.write(String.valueOf(speechAllowed));
+
+        if (speechAllowed) {
+            toggleListening(input, voiceButton);
+        }
     }
 
     private void toggleListening(TextView input, View voiceButton) {
         if (!isListening) {
-            permissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
-            input.setHint("Speak...");
-            voiceButton.setBackgroundTintList(ColorStateList.valueOf(0xFF00EADF));
+            startListening(input, voiceButton);
         } else {
-            speech.stopListening();
-            input.setHint("Type...");
-            voiceButton.setBackgroundTintList(ColorStateList.valueOf(0xFF2C2C2C));
+            stopListening(input, voiceButton);
         }
-
-        isListening = !isListening;
     }
 
-    private void startListening() {
+    private void startListening(TextView input, View voiceButton) {
+        permissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
+        input.setHint("Speak...");
+        voiceButton.setBackgroundTintList(ColorStateList.valueOf(0xFF00EADF));
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         intent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
         speech.startListening(intent);
+        isListening = true;
+    }
+
+    private void stopListening(TextView input, View voiceButton) {
+        speech.destroy();
+        input.setHint("Type...");
+        voiceButton.setBackgroundTintList(ColorStateList.valueOf(0xFF2C2C2C));
+        isListening = false;
     }
 
     @Override

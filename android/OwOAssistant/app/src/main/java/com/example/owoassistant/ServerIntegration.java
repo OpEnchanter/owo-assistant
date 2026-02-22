@@ -1,21 +1,34 @@
 package com.example.owoassistant;
 
-import android.animation.TimeInterpolator;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import org.commonmark.node.Node;
 import org.json.JSONObject;
 
 import java.time.Duration;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
+import io.noties.markwon.MarkwonConfiguration;
+import io.noties.markwon.MarkwonPlugin;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import io.noties.markwon.Markwon;
+import io.noties.markwon.ext.strikethrough.StrikethroughPlugin;
+import io.noties.markwon.ext.tables.TablePlugin;
+import io.noties.markwon.ext.tasklist.TaskListPlugin;
 
 public class ServerIntegration {
     private Debug debug;
@@ -34,7 +47,7 @@ public class ServerIntegration {
         this.apiKey = apiKey;
     }
 
-    public String postQuery(String query, TextView responseView, View responseWindow, String sID) {
+    public String postQuery(String query, TextView responseView, View responseWindow, String sID, AppCompatActivity activity) {
         JSONObject bodyJson = new JSONObject();
         try {
             bodyJson.put("query", query);
@@ -60,8 +73,16 @@ public class ServerIntegration {
                 debug.write("Error: Request to server failed; " + response.code());
             }
 
+            // Parse response from server as JSON and set responseView text
             JSONObject responseObject = new JSONObject(response.body().string());
-            responseView.setText(responseObject.getString("response"));
+
+            Markwon markwon = Markwon.builder(activity)
+                    .usePlugin(StrikethroughPlugin.create())
+                    .usePlugin(TaskListPlugin.create(activity))
+                    .usePlugin(TablePlugin.create(activity))
+                    .build();
+
+            markwon.setMarkdown(responseView, responseObject.getString("response"));
 
             debug.write(responseObject.getString("response"));
             responseView.getLineCount();

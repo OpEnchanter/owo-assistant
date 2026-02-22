@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         TextView apiKey = findViewById(R.id.apiKey);
+        apiKey.setText(prefs.getString("apiKey", ""));
 
 
         Button save = findViewById(R.id.save);
