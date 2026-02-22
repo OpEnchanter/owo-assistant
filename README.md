@@ -34,7 +34,7 @@ git clone https://github.com/OpEnchanter/owo-assistant.git; cd owo-assistant/ser
 ```
 
 ## Client Installation
-The prebuilt `.apk` binary for the app is in releases, from which you can download it and load it onto your phone.
+The prebuilt `.apk` binary for the app is in [releases](https://github.com/OpEnchanter/owo-assistant/releases), from which you can download it and load it onto your phone.
 
 **Post install steps**
 1. Get server URL with `/query` appended to it (ex. `http://127.0.0.1:8080/query` or `https://uwu.sillydomain.tld/query` if using a domain) and enter it into the URL input.
