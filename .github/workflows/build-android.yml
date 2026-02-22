@@ -1,0 +1,55 @@
+name: Android Build
+
+on:
+    workflow_dispatch:
+    push:
+      paths:
+        - android/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Grant gradlew permissions
+        run: chmod +x gradlew
+
+      - name: Build APK
+        run: ./gradlew assembleRelease
+
+      - name: Sign APK
+        uses: r0adkll/sign-android-release@v1
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.KEYSTORE }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ steps.sign_app.outputs.signedReleaseFile }}
+          name: "build-${{ github.run_number }}"
+          name: "Build #${{ github.run_number }}"
+          body: "Automated android client build (commit: ${{ github.sha }})"
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload APK Artifact
+        uses: action/upload-artifact@v4
+        with:
+          name: owo-assistant.apk
+          path: app/build/outputs/apk/debug/*.apk
