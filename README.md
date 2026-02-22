@@ -7,7 +7,7 @@
 [![Android Build](https://github.com/OpEnchanter/owo-assistant/actions/workflows/build-android.yml/badge.svg)](https://github.com/OpEnchanter/owo-assistant/actions/workflows/build-android.yml)
 ## Server Installation
 > [!NOTE]
-> The fastest way to get the server up is with docker, to serve the app with docker, first ensure you have docker installed on your machine then, use the provided `docker compose`, detailed below.
+> The fastest way to get the server up is with docker, to serve the app with docker, first ensure you have docker installed on your machine then, use the provided `docker compose` detailed below.
 
 ### Containerized installation
 Running the server in Docker is relatively simple, copy the YAML below into a new `docker-compose.yml` file and run `docker compose up -d` *or* run the provided command for downloading and running the docker compose.
