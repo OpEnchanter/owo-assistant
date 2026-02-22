@@ -10,10 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: android/OwOAssistant
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,10 +22,10 @@ jobs:
           cache: 'gradle'
 
       - name: Grant gradlew permissions
-        run: chmod +x gradlew
+        run: chmod +x android/OwOAssistant/gradlew
 
       - name: Build APK
-        run: ./gradlew assembleRelease
+        run: ./android/OwOAssistant/gradlew assembleRelease
 
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
@@ -44,12 +40,12 @@ jobs:
           keyPassword: ${{ secrets.KEY_PASSWORD }}
 
       - name: Rename APK
-        run: mv ${{ steps.sign_app.outputs.signedReleaseFile }} app/build/outputs/apk/release/owo-assistant.apk
+        run: mv ${{ steps.sign_app.outputs.signedReleaseFile }} android/OwOAssistant/app/build/outputs/apk/release/owo-assistant.apk
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2
         with:
-          files: app/build/outputs/apk/release/owo-assistant.apk
+          files: android/OwOAssistant/app/build/outputs/apk/release/owo-assistant.apk
           tag_name: "build-${{ github.run_number }}"
           name: "Build #${{ github.run_number }}"
           body: "Automated android client build (commit: ${{ github.sha }})"
