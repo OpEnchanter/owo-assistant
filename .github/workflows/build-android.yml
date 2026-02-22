@@ -25,7 +25,8 @@ jobs:
         run: chmod +x android/OwOAssistant/gradlew
 
       - name: Build APK
-        run: ./android/OwOAssistant/gradlew assembleRelease
+        run: ./gradlew assembleRelease
+        working-directory: ./android/OwOAssistant
 
       - name: Sign APK
         uses: r0adkll/sign-android-release@v1
