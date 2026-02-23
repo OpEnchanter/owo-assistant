@@ -25,6 +25,8 @@ import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsAnimationCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.owoassistant.animated.LoadingAnimation;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -96,6 +98,7 @@ public class AssistantEntryActivity extends AppCompatActivity {
         View responseWindow = findViewById(R.id.responseWindow);
         View voiceButton = findViewById(R.id.speechButton);
         TextView authenticationError = findViewById(R.id.authError);
+        LoadingAnimation loadingAnimation = findViewById(R.id.LoadingAnimation);
 
         authenticationError.setVisibility(View.INVISIBLE);
 
@@ -124,7 +127,7 @@ public class AssistantEntryActivity extends AppCompatActivity {
         });
 
         Debug debug = new Debug(debugView);
-        ServerIntegration serverIntegration = new ServerIntegration(debug, prefs.getString("backendUrl", ""), prefs.getString("apiKey", ""), authenticationError);
+        ServerIntegration serverIntegration = new ServerIntegration(debug, prefs.getString("backendUrl", ""), prefs.getString("apiKey", ""), authenticationError, loadingAnimation);
 
         String[] hints = {
                 "Ask me anything!",

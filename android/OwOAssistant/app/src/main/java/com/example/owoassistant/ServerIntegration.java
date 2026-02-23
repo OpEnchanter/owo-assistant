@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.owoassistant.animated.LoadingAnimation;
+
 import org.commonmark.node.Node;
 import org.json.JSONObject;
 
@@ -36,8 +38,9 @@ public class ServerIntegration {
     private String server;
     private String apiKey;
     private TextView authError;
+    private LoadingAnimation loadingAnimation;
 
-    public ServerIntegration(Debug debug, String server, String apiKey, TextView authenticationError) {
+    public ServerIntegration(Debug debug, String server, String apiKey, TextView authenticationError, LoadingAnimation loadingAnimation) {
         client = new OkHttpClient.Builder()
                 .connectTimeout(Duration.ofMillis(1500))
                 .readTimeout(Duration.ofMinutes(2))
@@ -47,9 +50,27 @@ public class ServerIntegration {
         this.server = server;
         this.apiKey = apiKey;
         this.authError = authenticationError;
+        this.loadingAnimation = loadingAnimation;
     }
 
     public String postQuery(String query, TextView responseView, View responseWindow, String sID, AppCompatActivity activity) {
+        // Open the window and show loading anim
+        loadingAnimation.post(new Runnable() {
+            @Override
+            public void run() {
+                loadingAnimation.setVisibility(View.VISIBLE);
+                responseWindow.setVisibility(View.VISIBLE);
+                responseView.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        responseWindow.animate()
+                .scaleY(1f)
+                .translationY(160f)
+                .setDuration(150);
+
+
+        // Make request
         JSONObject bodyJson = new JSONObject();
         try {
             bodyJson.put("query", query);
@@ -96,17 +117,12 @@ public class ServerIntegration {
                         try {
                             markwon.setMarkdown(responseView, responseObject.getString("response"));
                             responseView.setVisibility(View.VISIBLE);
+                            loadingAnimation.setVisibility(View.INVISIBLE);
                         } catch (Exception e) {}
-
                     }
                 });
 
                 debug.write(responseObject.getString("response"));
-                responseView.getLineCount();
-                responseWindow.animate()
-                        .scaleY(1f)
-                        .translationY(160f)
-                        .setDuration(150);
 
                 return responseObject.getString("sessionID");
             }
