@@ -5,6 +5,10 @@
 ![https://hackatime-badge.hackclub.com/U0ADGEN6745/owo-assistant](https://hackatime-badge.hackclub.com/U0ADGEN6745/owo-assistant)
 [![Build Docker and push to GHCR](https://github.com/OpEnchanter/owo-assistant/actions/workflows/publish-docker.yml/badge.svg)](https://github.com/OpEnchanter/owo-assistant/actions/workflows/publish-docker.yml)
 [![Android Build](https://github.com/OpEnchanter/owo-assistant/actions/workflows/build-android.yml/badge.svg)](https://github.com/OpEnchanter/owo-assistant/actions/workflows/build-android.yml)
+## Features
+- [**Server**](#server-installation) (Modules, configuration)
+    - **Web Client** (A chat interface in the browser, endpoint `/chat`. ex. `https://uwu.sillydomain.tld/chat`)
+- [**Android Client**](#client-installation) (A native client for Android)
 ## Server Installation
 > [!NOTE]
 > The fastest way to get the server up is with docker, to serve the app with docker, first ensure you have docker installed on your machine then, use the provided `docker compose` detailed below.
