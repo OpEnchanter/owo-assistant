@@ -90,8 +90,16 @@ public class ServerIntegration {
                         .usePlugin(TablePlugin.create(activity))
                         .build();
 
-                markwon.setMarkdown(responseView, responseObject.getString("response"));
-                responseView.setVisibility(View.VISIBLE);
+                responseView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            markwon.setMarkdown(responseView, responseObject.getString("response"));
+                            responseView.setVisibility(View.VISIBLE);
+                        } catch (Exception e) {}
+
+                    }
+                });
 
                 debug.write(responseObject.getString("response"));
                 responseView.getLineCount();

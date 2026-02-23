@@ -216,7 +216,7 @@ p {
     margin: 4px;
 }
 
-code {
+pre code {
     background: var(--bg);
     border-radius: 16px;
 
@@ -227,22 +227,32 @@ code {
     color: var(--text-muted);
     margin: 4px;
 
+    box-sizing: border-box;
+    width: 100%;
+
     overflow-x: scroll;
 }
 
-pre code {
+code {
     background: var(--bg-light);
     border-radius: 8px;
     padding: 4px;
     text-wrap: none;
     box-sizing: border-box;
     width: fit-content;
+    color: var(--text-muted);
 }
 
 a {
     color: oklch(65% 0.2 285);
     text-decoration: none;
     margin: 4px;
+}
+
+table, th, td {
+    border: 1px solid var(--border);
+    margin: 0px;
+    border-collapse: collapse; 
 }
 
 @keyframes loading {
