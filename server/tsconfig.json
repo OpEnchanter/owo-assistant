@@ -30,7 +30,8 @@
 	"paths": {
 		"owomodule": ["./libs/module/index.ts"],
 		"owodb": ["./libs/owodb/index.ts"],
-    "chatsession": ["./libs/chatsession/index.ts"]
+        "chatsession": ["./libs/chatsession/index.ts"],
+        "commandparser": ["./libs/commandprocessor/index.ts"]
 	}
   }
 }

@@ -128,6 +128,9 @@ export class Module extends ModuleBase {
 ```
 
 ## OwODB
+```typescript
+import { OwODB } from "owodb";
+```
 OwODB is a wrapper that abstracts useful tools for creating modules, and storing related data.
 
 **Functions**
@@ -135,12 +138,46 @@ OwODB is a wrapper that abstracts useful tools for creating modules, and storing
 - **setModuleData(moduleName: string, data: Object)** - Sets the stored data for a given module to an `Object`.
 
 ## OwOModule
+```typescript
+import { ModuleBase, type ModuleResult } from "owomodule"
+```
 Module related classes and interfaces.
 
 **Classes**
 - **ModuleBase** - Can be extended to create a module.
-- type **ModuleResult** - The return type of any module `{ endRequest:boolean, response:string }`. `endRequest` determines if the chain of modules will be stopped and `response` will be returned to the client.
- 
+- type **ModuleResult** - The return type of any module `{ endRequest:boolean, response:string }`. `endRequest` determines if the chain of modules will be stopped and `response` will be returned to the . 
+
+## Command Parser
+```typescript
+import { parseCommand, type CommandResult, type CommandShape } from "commandparser"
+```
+Module that exposes functions for easily parsing user's commands without having to write any boilerplate.
+
+**Interfaces**
+- **CommandResult** - The result of a command. `{ matched: boolean, args: Record<string, string> }`
+- **CommandShape** - The shape of a given command. `{ prefix: string, args: string[] }`
+
+
+**Functions**
+- **parseCommand** - Parses a given string to check if it matches a given `CommandShape` and determines the arguments.
+
+**Example**
+```typescript
+const query = "set example lamp temperature blue"
+console.log(`col. ${parseCommand({prefix:"set", args:["color"]} as CommandShape, query, ["to", "please"]).matched}`);
+console.log(`temp. ${parseCommand({prefix:"set", args:["temperature"]} as CommandShape, query, ["to", "please"]).matched}`);
+console.log(`bright. ${parseCommand({prefix:"set", args:["brightness"]} as CommandShape, query, ["to", "please"]).matched}`);
+```
+
+--- would return --- 
+
+```bash
+col. false
+temp. true
+bright. false
+```
+showing that the given query matched with the `set temperature` command.
+
 ---
 <p align=center>You made it to the bottom O.o</p>
 <p align="center">Made with much :3</p>

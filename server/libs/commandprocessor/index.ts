@@ -1,15 +1,15 @@
-export interface commandResult {
+export interface CommandResult {
     matched: boolean,
     args?: Record<string, string>
 }
 
-export interface commandShape {
+export interface CommandShape {
     prefix: string,
     args: string[]
 }
 
-export function parseCommand(shape: commandShape, query: string, wordBlacklist?: string[]): commandResult {
-    let result = { matched: false, arguments: {} } as commandResult;
+export function parseCommand(shape: CommandShape, query: string, wordBlacklist?: string[]): CommandResult {
+    let result = { matched: false, arguments: {} } as CommandResult;
     
     let queryLowerCase = query.replaceAll(/\p{P}/gu, '').toLowerCase();
     if ( wordBlacklist ) { queryLowerCase = queryLowerCase.replaceAll(new RegExp(wordBlacklist.join('|'), 'gi'), ''); }
@@ -26,9 +26,14 @@ export function parseCommand(shape: commandShape, query: string, wordBlacklist?:
         let tokenIndex = latestSearchindex + 1;
 
         while ( argumentIndex < shape.args.length ) {
+            if ( !tokenized.includes(nextExpectedToken) && nextExpectedToken != undefined ) {
+                result.matched = false;
+                return result;
+            }
+
             let currentString = "";
             while ( tokenized[tokenIndex] != nextExpectedToken ) {
-                currentString += ((currentString.length > 0) ? " " : "") + tokenized[tokenIndex];
+                currentString += ((currentString.length > 0 && nextExpectedToken != undefined) ? " " : "") + tokenized[tokenIndex];
                 tokenIndex++;
             }
             tokenIndex++;
@@ -45,4 +50,7 @@ export function parseCommand(shape: commandShape, query: string, wordBlacklist?:
 }
 
 // Example proof of functionality
-console.log(parseCommand({prefix:"set", args:["color"]} as CommandShape, "set example lamp color to blue please", ["to", "please"]));
+const query = "set example lamp temperature blue"
+console.log(`col. ${parseCommand({prefix:"set", args:["color"]} as CommandShape, query, ["to", "please"]).matched}`);
+console.log(`temp. ${parseCommand({prefix:"set", args:["temperature"]} as CommandShape, query, ["to", "please"]).matched}`);
+console.log(`bright. ${parseCommand({prefix:"set", args:["brightness"]} as CommandShape, query, ["to", "please"]).matched}`);
