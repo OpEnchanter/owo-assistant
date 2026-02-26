@@ -1,12 +1,19 @@
 import { ModuleBase,  type ModuleResult } from "owomodule"
 import { OwODB } from "owodb";
 import { type ChatMessage } from "chatsession";
+import { parseCommand, type CommandShape, type CommandResult } from "commandparser";
 import chalk from 'chalk';
 
-type HomeAction = (entityName: string, entityId: string, subaction: string, value: string) => Promise<any>;
+type ActionCallback = ( entityName: string, entityId: string, args: Record<string, string> ) => Promise<any>;
 
-interface SmartHomeActions {
-    [key: string]: HomeAction
+interface ParserArgs {
+    shape: CommandShape,
+    keyBlacklist: string[]
+}
+
+interface Action {
+    args: ParserArgs
+    callback: ActionCallback
 }
 
 interface HAState {
@@ -48,7 +55,6 @@ export class Module extends ModuleBase {
 
         const states: HAState[] = await res.json() as HAState[];
 
-        console.log(states);
 
         return states.reduce((acc: Record<string, string>, item: HAState) => {
             let name: string = item.attributes.friendly_name as string;
@@ -132,120 +138,117 @@ export class Module extends ModuleBase {
             'purple': [255, 0, 255]
         }
 
-        const actions: SmartHomeActions = {
-            'turn on': async (entityName: string, entityId: string, subaction: string, value: string) => {
-                let body = {
-                    entity_id: entityId
-                };
-                await this.haPost(body, "/api/services/light/turn_on");
-                return `Turned on ${entityName}!`;
-            }, 
-            'turn off': async (entityName: string, entityId: string, subaction: string, value: string) => {
-                let body = {
-                    entity_id: entityId
-                };
-                await this.haPost(body, "/api/services/light/turn_off");
-                return `Turned off ${entityName}!`;
-            },
-            'set': async (entityName: string, entityId: string, subaction: string, value: string) => {
-                let attrib = attribMap[subaction];
+        const actions: Action[] = [
+            {
+                callback: async (entityName: string, entityId: string, args: Record<string, string>) => {
+                    let body = {
+                        entity_id: entityId
+                    };
+                    await this.haPost(body, "/api/services/light/turn_on");
+                    return `Turned on ${entityName}!`;
+                },
+                args: {
+                    shape: { prefix: "turn on", args: [] } as CommandShape,
+                    keyBlacklist: [ "please" ]
+                } as ParserArgs
+            } as Action,
+            {
+                callback: async (entityName: string, entityId: string, args: Record<string, string>) => {
+                    let body = {
+                        entity_id: entityId
+                    };
+                    await this.haPost(body, "/api/services/light/turn_off");
+                    return `Turned off ${entityName}!`;
+                },
+                args: {
+                    shape: { prefix: "turn off", args: [] } as CommandShape,
+                    keyBlacklist: [ "please" ]
+                } as ParserArgs
+            } as Action,
+            {
+                callback: async (entityName: string, entityId: string, args: Record<string, string>) => {
 
-                let convertedValue: any = value;
-                if (subaction == 'temperature') {
-                    convertedValue = Math.max(Math.min(2000 + (parseInt(value) / 100) * 4500, 6500), 0);
-                } else if (subaction == 'brightness') {
-                    convertedValue = Math.max(Math.min((parseInt(value) / 100) * 255, 255), 0)
-                } else if (subaction == 'color') {
-                    convertedValue = colorMap[value];
-                }
-
-                if (attrib) {
                     let body = {
                         entity_id: entityId,
-                        [attrib]: convertedValue
+                        kelvin: Math.max(Math.min(2000 + (parseInt(args["temperature"]) / 100) * 4500, 6500), 0)
                     };
 
                     await this.haPost(body, "/api/services/light/turn_on");
-                }
-                return `Done!`
-            },
-            'value': async (entityName: string, entityId: string, subaction: string, value: string) => {
-                const dState = await this.getDeviceState(entityId);
-                console.log(dState);
-                const attributes = dState.attributes;
-                let unit_of_measurement = '';
-                if (Object.hasOwn(attributes, "unit_of_measurement")) {
-                    unit_of_measurement = dState.attributes.unit_of_measurement.toString()
-                }
-                return `${dState.state.toString()}${unit_of_measurement}`;
-            }
-        };
+                    return `Done!`
+                },
+                args: {
+                    shape: { prefix: "set", args: [ "temperature" ] } as CommandShape,
+                    keyBlacklist: [ "please" ]
+                } as ParserArgs
+            } as Action,
+            {
+                callback: async (entityName: string, entityId: string, args: Record<string, string>) => {
 
-        const ignoredWords = [' the', ' please', ' thank you', ' to']
-        
+                    let body = {
+                        entity_id: entityId,
+                        brightness: Math.max(Math.min((parseInt(args["brightness"]) / 100) * 255, 255), 0)
+                    };
+
+                    await this.haPost(body, "/api/services/light/turn_on");
+                    return `Done!`
+                },
+                args: {
+                    shape: { prefix: "set", args: [ "brightness" ] } as CommandShape,
+                    keyBlacklist: [ "please" ]
+                } as ParserArgs
+            } as Action,
+            {
+                callback: async (entityName: string, entityId: string, args: Record<string, string>) => {
+
+                    let body = {
+                        entity_id: entityId,
+                        rgb_color: colorMap[args["color"]]
+                    };
+
+                    await this.haPost(body, "/api/services/light/turn_on");
+                    return `Done!`
+                },
+                args: {
+                    shape: { prefix: "set", args: [ "color" ] } as CommandShape,
+                    keyBlacklist: [ "please" ]
+                } as ParserArgs
+            } as Action,
+            {
+                callback: async (entityName: string, entityId: string, args: Record<string, string>) => {
+                    const dState = await this.getDeviceState(entityId);
+                    console.log(dState);
+                    const attributes = dState.attributes;
+                    let unit_of_measurement = '';
+                    if (Object.hasOwn(attributes, "unit_of_measurement")) {
+                        unit_of_measurement = dState.attributes.unit_of_measurement.toString()
+                    }
+                    return `${dState.state.toString()}${unit_of_measurement}`;
+                },
+                args: {
+                    shape: { prefix: "value", args: [] } as CommandShape,
+                    keyBlacklist: [ "please" ]
+                } as ParserArgs
+            } as Action
+        ];
+
+        let response = "";
         let isHACommand = false;
-        let response = '';
-        const queryLower = query.replaceAll(/\p{P}/gu, '').toLowerCase().replaceAll(new RegExp(ignoredWords.join('|'), 'gi'), '');
-        for (let actionName of Object.keys(actions)) {
-            if (queryLower.includes(actionName)) {
-                isHACommand = true
 
-                const tokenized = queryLower.split(' ');
-                let actionIdx = -1;
-                let actionSearchIdx = 0;
-
-                const tokenizedAction = actionName.split(' ');
-                tokenizedAction.forEach(token => {
-                    if (tokenized[actionSearchIdx] = token) {
-                        actionSearchIdx++;
-                    }
-                    actionIdx++;
-                });
-
-                let entityNameEndIdx = actionIdx
-                let entityName = '';
-
-                let completeActionName = actionName;
-                let subaction = '';
-                let value = '';
-
-                let searchEnd = tokenized.length-1;
-                if (actionName == 'set') {
-                    Object.keys(attribMap).forEach((a) => {
-                        if (tokenized.includes(a)) {
-                            searchEnd = tokenized.indexOf(a)-1;
-                            completeActionName += ` ${a}`;
-                            subaction = a;
-
-                            value = tokenized[tokenized.indexOf(a)+1] as string;
-                        }
-                    });
-                }
-
-                while (entityNameEndIdx < searchEnd) {
-                    entityNameEndIdx++;
-                    if (entityNameEndIdx != actionIdx + 1) {
-                        entityName += ' ';
-                    }
-                    entityName += tokenized[entityNameEndIdx];
-                }
-
-                // Entity ID search
+        for (let action of actions) {
+            const res = parseCommand(action.args.shape, query, action.args.keyBlacklist);
+            if ( res.matched ) {
                 const haDevices: Record<string, string> = await this.haFetchDevices();
-                const entityId = haDevices[entityName];
-
-                if (actions[actionName] && entityId) {
-                    response = await actions[actionName](entityName, entityId, subaction, value);
-                }
-
-                console.log(response);
+                const entityId = haDevices[res.args[action.args.shape.prefix]];
 
                 if (entityId) {
-                    return {response: response, endRequest: isHACommand} as ModuleResult;
+                    response = await action.callback(res.args[action.args.shape.prefix], entityId, res.args);
+                    isHACommand = true;
                 }
             }
         }
 
-        return {response: "", endRequest: false} as ModuleResult;
+        console.log(response);
+
+        return {response: response, endRequest: isHACommand} as ModuleResult;
     }
 }

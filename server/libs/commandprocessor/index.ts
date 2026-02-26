@@ -1,6 +1,6 @@
 export interface CommandResult {
     matched: boolean,
-    args?: Record<string, string>
+    args: Record<string, string>
 }
 
 export interface CommandShape {
@@ -9,19 +9,30 @@ export interface CommandShape {
 }
 
 export function parseCommand(shape: CommandShape, query: string, wordBlacklist?: string[]): CommandResult {
-    let result = { matched: false, arguments: {} } as CommandResult;
+    let result = { matched: false, args: {} } as CommandResult;
     
     let queryLowerCase = query.replaceAll(/\p{P}/gu, '').toLowerCase();
     if ( wordBlacklist ) { queryLowerCase = queryLowerCase.replaceAll(new RegExp(wordBlacklist.join('|'), 'gi'), ''); }
     const tokenized = queryLowerCase.split(" ");
+
+    const tokenizedPrefix = shape.prefix.split(" ");
+    let commandStartIndex = tokenized.indexOf(tokenizedPrefix[0])
+    let matchedKeys = 1;
+    for (let i = 1; i < tokenizedPrefix.length; i++) {
+        if (tokenized[commandStartIndex+1] == tokenizedPrefix[i]) { 
+            commandStartIndex++;
+            matchedKeys++;
+        } else {
+            result.matched = false;
+        }
+    }
     
-    if ( tokenized.includes(shape.prefix) ) { result.matched = true; }
+    if ( matchedKeys == tokenizedPrefix.length ) { result.matched = true; }
     
     if ( result.matched ) {
-        const commandStartIndex = tokenized.indexOf(shape.prefix);
         let argumentIndex = -1;
         let nextExpectedToken = shape.args[argumentIndex+1];
-        let currentArgument = shape.prefix;
+        let currentArgument: string = shape.prefix;
         let latestSearchindex = commandStartIndex;
         let tokenIndex = latestSearchindex + 1;
 
@@ -33,12 +44,12 @@ export function parseCommand(shape: CommandShape, query: string, wordBlacklist?:
 
             let currentString = "";
             while ( tokenized[tokenIndex] != nextExpectedToken ) {
-                currentString += ((currentString.length > 0 && nextExpectedToken != undefined) ? " " : "") + tokenized[tokenIndex];
+                currentString += ((currentString.length > 0 && tokenIndex < tokenized.length) ? " " : "") + tokenized[tokenIndex];
                 tokenIndex++;
             }
             tokenIndex++;
 
-            result.arguments[currentArgument] = currentString;
+            result.args[currentArgument] = currentString;
 
             argumentIndex++;
             nextExpectedToken = shape.args[argumentIndex+1];
@@ -48,9 +59,3 @@ export function parseCommand(shape: CommandShape, query: string, wordBlacklist?:
 
     return result;
 }
-
-// Example proof of functionality
-const query = "set example lamp temperature blue"
-console.log(`col. ${parseCommand({prefix:"set", args:["color"]} as CommandShape, query, ["to", "please"]).matched}`);
-console.log(`temp. ${parseCommand({prefix:"set", args:["temperature"]} as CommandShape, query, ["to", "please"]).matched}`);
-console.log(`bright. ${parseCommand({prefix:"set", args:["brightness"]} as CommandShape, query, ["to", "please"]).matched}`);
