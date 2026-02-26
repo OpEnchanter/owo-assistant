@@ -61,6 +61,9 @@ jobs:
       - name: Bun Setup
         uses: oven-sh/setup-bun@v2
 
+      - name: Bun Install
+        run: bun install
+
       - name: Build Windows Executable
         run: |
           bun build ./index.ts --compile --target bun-windows-x64 --outfile ./owo-win-x64.exe
