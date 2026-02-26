@@ -95,7 +95,7 @@ jobs:
               bun/owo-win-x64.exe
               bun/owo-linux-x64
           tag_name: "build-${{ github.ref_name }}"
-          name: "Build #${{ github.ref_name }}"
+          name: "Build ${{ github.ref_name }}"
           body: |
             *Automated executable build (commit: ${{ github.sha }})*
             **Client Installation**
