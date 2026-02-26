@@ -2,6 +2,7 @@ import express, { type NextFunction, type Request, type Response } from "express
 import { ModuleBase, type ModuleResult } from "owomodule";
 import { OwODB } from "owodb";
 import { readdir } from "node:fs/promises"
+import { existsSync, mkdirSync } from "node:fs";
 import path from 'path';
 import chalk from 'chalk';
 import session, { type SessionData } from 'express-session';
@@ -26,6 +27,10 @@ interface PostProcessingData {
 }
 
 // Initialize DB
+if (!existsSync("./data")) {
+    mkdirSync("./data");
+}
+
 const db: OwODB = new OwODB("./data/owodb.sqlite");
 
 // Initialize app
