@@ -11,6 +11,19 @@ import { password } from "bun";
 import { processResult } from "post-processing/llm";
 import { ChatSessionManager, ChatSession, type ChatMessage } from "chatsession";
 
+
+// Force bundler to include all resources
+if ((typeof import.meta.glob) !== "undefined") {
+    console.log("running bundler only code");
+    import.meta.glob([
+        "./public/**/*",
+        "./static/**/*",
+        "./modules/**/*",
+        "./post-processing/**/*",
+        "./libs/**/*",
+    ], { eager: true, with: { type: "file" } })
+}
+
 interface Statistics {
 	totalQueries: number,
 	requestsPerDay: Record<string, number>,
