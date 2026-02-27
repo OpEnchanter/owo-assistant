@@ -49,7 +49,7 @@ jobs:
           name: android
           path: android/OwOAssistant/app/build/outputs/apk/release/owo-assistant.apk
 
-  build-bun:
+  build-standalone-linux:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -64,23 +64,44 @@ jobs:
       - name: Bun Install
         run: bun install
 
-      - name: Build Windows Executable
-        run: |
-          bun build ./index.ts --compile --target bun-windows-x64 --outfile ./owo-win-x64.exe
-          bun build ./index.ts --compile --target bun-linux-x64 --outfile ./owo-linux-x64
+      - name: Build Linux Executable
+        run: bun build ./index.ts --compile --target bun-linux-x64 --outfile ./owo-linux-x64
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: bun
-          path: |
-            server/owo-win-x64.exe
-            server/owo-linux-x64
+          name: standalone-linux
+          path: server/owo-linux-x64
+
+  build-standalone-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: ./server
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Bun Setup
+        uses: oven-sh/setup-bun@v2
+
+      - name: Bun Install
+        run: bun install
+
+      - name: Build Windows Executable
+        run: bun build ./index.ts --compile --target bun-windows-x64 --outfile ./owo-win-x64.exe
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: standalone-windows
+          path: server/owo-win-x64.exe
 
   publish:
     needs:
       - build-android
-      - build-bun
+      - build-standalone-linux
+      - build-standalone-windows
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -92,8 +113,8 @@ jobs:
         with:
           files: |
               android/owo-assistant.apk
-              bun/owo-win-x64.exe
-              bun/owo-linux-x64
+              standalone-windows/owo-win-x64.exe
+              standalone-linux/owo-linux-x64
           tag_name: "build-${{ github.ref_name }}"
           name: "Build ${{ github.ref_name }}"
           body: |
