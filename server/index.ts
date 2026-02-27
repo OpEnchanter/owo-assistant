@@ -12,15 +12,21 @@ import { processResult } from "post-processing/llm";
 import { ChatSessionManager, ChatSession, type ChatMessage } from "chatsession";
 
 
+const publicPath = path.join(import.meta.dir, "public", "**", "*");
+const staticPath = path.join(import.meta.dir, "static", "**", "*");
+const modulesPath = path.join(import.meta.dir, "modules", "**", "*");
+const postProcessingPath = path.join(import.meta.dir, "post-processing", "**", "*");
+const libPath = path.join(import.meta.dir, "libs", "**", "*");
+
 // Force bundler to include all resources
 if ((typeof import.meta.glob) !== "undefined") {
     console.log("running bundler only code");
     import.meta.glob([
-        "./public/**/*",
-        "./static/**/*",
-        "./modules/**/*",
-        "./post-processing/**/*",
-        "./libs/**/*",
+        publicPath,
+        staticPath,
+        modulesPath,
+        postProcessingPath,
+        libPath
     ], { eager: true, with: { type: "file" } })
 }
 
