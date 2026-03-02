@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Demo</title>
+        <link rel="stylesheet" href="/index.css">
+        <link rel="stylesheet" href="/chat.css">
+    </head>
+    <body>
+        <div class="messagesContainer">
+            <div class="messages"></div>
+            <div class="fade"></div>
+        </div>
+        <div class="chatbox">
+            <input type="text" id="query" placeholder="Start typing...">
+            <button class="send" id="send">
+                <img src="/images/send.svg">
+            </button>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
+        <script>
+            const query = document.getElementById("query");
+            document.addEventListener('keydown', (e) => {
+                query.focus();
+
+                if (e.key == 'Enter') {
+                    document.getElementById("send").click();
+                }
+            });
+
+            let sessionID = '';
+
+            const messages = document.querySelector(".messages");
+            document.getElementById("send").addEventListener('click', async (e) => {
+                let queryText = query.value;
+                if (queryText != '') {
+                    const userMessage = document.createElement("div");
+                    userMessage.className = "userMessage";
+                    userMessage.innerText = queryText;
+                    userMessage.style.transform = "scale(0.1) translateY(64px)";
+                    messages.appendChild(userMessage);
+                    query.value = '';
+                    setTimeout(() => {
+                        userMessage.style.transform = "scale(1) translateY(0)";
+                    }, 15);
+
+                    const loading = document.createElement("div");
+                    loading.className = "loading";
+                    messages.appendChild(loading);
+
+                    messages.scrollTo({
+                        top: messages.scrollHeight,
+                        behavior: "smooth"
+                    });
+
+                    let requestData = { query:queryText };
+                    if (sessionID !== '') {
+                        requestData.sessionID = sessionID;
+                    }
+
+                    console.log(requestData);
+                    
+                    await fetch("/query", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(requestData)
+                    })
+                        .then(res => { return res.json() })
+                        .then(data => {
+                            sessionID = data.sessionID;
+                            const assistantMessage = document.createElement("div");
+                            assistantMessage.className = "assistantMessage";
+                            console.log(data.response);
+                            assistantMessage.innerHTML = marked.parse(data.response);
+                            assistantMessage.style.transform = "scale(0.1) translateY(64px)";
+                            loading.replaceWith(assistantMessage);
+                            messages.scrollTo({
+                                top: messages.scrollHeight,
+                                behavior: "smooth"
+                            });
+                            query.value = '';
+                            setTimeout(() => {
+                                assistantMessage.style.transform = "scale(1) translateY(0)";
+                            }, 15);
+                            Prism.highlightAll();
+                        });
+                }
+            });
+        </script>
+
+    </body>
+</html>
