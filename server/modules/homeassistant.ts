@@ -17,17 +17,18 @@ interface Action {
 }
 
 interface HAState {
-  entity_id: string;
-  state: string;
+  entity_id: string,
+  state: string,
+  name: string,
   attributes: {
-    friendly_name?: string;
-    brightness?: number;
-    rgb_color?: [number, number, number];
-    unit_of_measurement?: string;
-    [key: string]: any;
+    friendly_name?: string,
+    brightness?: number,
+    rgb_color?: [number, number, number],
+    unit_of_measurement?: string,
+    [key: string]: any,
   };
-  last_changed: string;
-  last_updated: string;
+  last_changed: string,
+  last_updated: string,
 }
 
 interface ModuleData {
@@ -58,7 +59,7 @@ export class Module extends ModuleBase {
 
         return states.reduce((acc: Record<string, string>, item: HAState) => {
             let name: string = item.attributes.friendly_name as string;
-            name = name.replaceAll(/\p{P}/gu, '').toLowerCase();
+            name = Object.hasOwn(item.attributes, "friendly_name") ? name.replaceAll(/\p{P}/gu, '').toLowerCase() : "";
             acc[name] = item.entity_id;
             return acc;
         }, {});
