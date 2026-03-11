@@ -126,8 +126,8 @@ export class Module extends ModuleBase {
             const actionResult = parseCommand(action.args.shape, query, action.args.keyBlacklist);
             if ( actionResult.matched ) {
                 const devices: Device[] = await this.fetchDevices(moduleData);
-                const entityID = undefined;
-                const entityName = undefined;
+                let entityID = undefined;
+                let entityName = undefined;
 
                 Object.keys(devices).forEach(deviceId => {
                     if (devices[deviceId].name.toLowerCase() == actionResult.args[action.args.shape.prefix]) {
