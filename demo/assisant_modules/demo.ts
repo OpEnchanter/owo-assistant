@@ -3,7 +3,7 @@ import { OwODB } from 'owodb';
 import { type ChatMessage } from 'chatsession';
 import { parseCommand, type CommandResult, type CommandShape } from 'commandparser';
 
-type actionCallback = ( entityName: string, entityId: string, args: Record<string, string> ) = Promise<any>;
+type actionCallback = ( entityName: string, entityId: string, args: Record<string, string> ) => Promise<any>;
 
 interface ParserArgs {
     shape: CommandShape,
