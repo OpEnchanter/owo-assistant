@@ -66,7 +66,7 @@ app.post("/query", async (req: Request, res: Response) => {
         },
         body: JSON.stringify(data)
     })
-        .then(res => {  return res.json(); })
+        .then(res => { console.log(res) })
         .then(json => { res.send(json) });
 });
 
