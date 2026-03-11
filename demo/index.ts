@@ -40,7 +40,7 @@ app.use(express.urlencoded({ extended: true }));
 const PORT = 8192;
 
 // Load config
-const configPath = path.join(__dirname, "conf.json");
+const configPath = path.join(__dirname, "config.json");
 const configFile = Bun.file(configPath);
 const config = await configFile.json() as Config;
 
