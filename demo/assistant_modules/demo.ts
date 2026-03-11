@@ -66,7 +66,7 @@ export class Module extends ModuleBase {
         let response = "";
         let endRequest = false;
 
-        const moduleData = db.getModuleData('demo.ts') as ModuleParams;
+        const moduleData = this.db.getModuleData('demo.ts') as ModuleParams;
 
         const colorMap: Record<string, number[]> = {
             "red": [255, 0, 0],

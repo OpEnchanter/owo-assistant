@@ -4,8 +4,19 @@
         <title>Demo</title>
         <link rel="stylesheet" href="/index.css">
         <link rel="stylesheet" href="/chat.css">
+        <link rel="stylesheet" href="/demo.css">
     </head>
     <body>
+        <button class="open-sidebar">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>menu</title><path fill="#dfdfdf" d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" /></svg>
+        </button>
+        <div class="sidebar">
+            <h2>Devices</h2>
+            <button class="close">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>close</title><path fill="#dfdfdf" d="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" /></svg>
+            </button>
+            <div class="devices"></div>
+        </div>
         <div class="messagesContainer">
             <div class="messages"></div>
             <div class="fade"></div>
@@ -18,6 +29,59 @@
         </div>
         <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
         <script>
+            const sidebar = document.querySelector(".sidebar");
+            document.querySelector(".open-sidebar").addEventListener('click', (e) => {
+                sidebar.style.transform = "translateX(0%)";
+            });
+
+            document.querySelector(".close").addEventListener('click', (e) => {
+                sidebar.style.transform = "translateX(-100%)";
+            });
+
+            const devices = document.querySelector(".devices");
+
+            document.addEventListener('DOMContentLoaded', async (e) => {
+                await fetch("/devices")
+                    .then(res => { return res.json() })
+                    .then(data => {
+                        console.log(data);
+                        Object.keys(data).forEach(deviceId => {
+                            devices.appendChild((() => {
+                                const elem = document.createElement("div");
+                                elem.className = "lightCard";
+
+                                elem.appendChild((() => {
+                                    const SVG_NS = "http://www.w3.org/2000/svg";
+                                    const icon = document.createElementNS(SVG_NS, "svg");
+                                    icon.setAttribute("class", "lightIcon");
+                                    icon.setAttribute("viewBox", "0 0 24 24");
+                                    icon.setAttribute("aria-hidden", "true");
+
+                                    const title = document.createElementNS(SVG_NS, "title");
+                                    title.textContent = "lightbulb";
+
+                                    const path = document.createElementNS(SVG_NS, "path");
+                                    path.setAttribute("d", "M12,2A7,7 0 0,0 5,9C5,11.38 6.19,13.47 8,14.74V17A1,1 0 0,0 9,18H15A1,1 0 0,0 16,17V14.74C17.81,13.47 19,11.38 19,9A7,7 0 0,0 12,2M9,21A1,1 0 0,0 10,22H14A1,1 0 0,0 15,21V20H9V21Z");
+                                    icon.setAttribute("fill", 'var(--bg-light)');
+
+                                    if (data[deviceId].on) {
+                                        path.setAttribute("fill", `rgb(${data[deviceId].color[0]}, ${data[deviceId].color[1]}, ${data[deviceId].color[2]})`);
+                                        icon.setAttribute("style", `background: rgb(${data[deviceId].color[0]-95}, ${data[deviceId].color[1]-95}, ${data[deviceId].color[2]-95});`);
+                                    }
+                                    icon.append(title, path);
+                                    return icon;
+                                })());
+
+                                const name = document.createElement("h2");
+                                name.innerText = data[deviceId].name;
+                                elem.appendChild(name);
+
+                                return elem;
+                            })())
+                        });
+                    });
+            });
+
             const query = document.getElementById("query");
             document.addEventListener('keydown', (e) => {
                 query.focus();

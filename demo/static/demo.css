@@ -1,0 +1,133 @@
+.sidebar {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+
+    width: 45vw;
+    height: 100vh;
+    background-color: var(--bg);
+
+    border-right: 1px solid var(--border);
+
+    z-index: 1000;
+    
+    padding: 12px;
+    gap: 12px;
+    box-sizing: border-box;
+
+    box-shadow: 10px 0px 24px oklch(25% 0 0);
+
+    transform: translateX(-100%);
+
+    transition: transform 150ms ease-out;
+
+    display: flex;
+    
+    flex-direction: column;
+    flex-wrap: wrap;
+
+    .devices {
+        display: flex;
+        flex-direction: row;
+        gap: 16px;
+        padding: 0px;
+
+        flex-wrap: wrap;
+    }
+
+    h2 {
+        font-size: 30px;
+        color: var(--text-muted);
+        height: 48px;
+        width: 100%;
+        margin: 0px;
+    }
+
+    .close {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+
+        width: 54px;
+        height: 54px;
+
+        margin: 0px;
+        padding: 12px;
+
+        border-radius: 100%;
+
+        background: none;
+        
+        color: var(--text-muted);
+
+        &:hover {
+            background: var(--bg-light);
+        }
+    }
+
+    .lightCard {
+        display: flex;
+        background: var(--bg-light);
+        border: 1px solid var(--border);
+
+        border-radius: 24px;
+
+        padding: 12px;
+        box-sizing: border-box;
+
+        min-width: 0px;
+        
+        flex: 1 0 calc(50% - 16px);
+
+        align-items: center;
+
+        .lightIcon {
+            width: 32px;
+            height: 32px;
+
+            background-color: var(--bg);
+            padding: 8px;
+            border-radius: 12px;
+
+            margin-right: 24px;
+        }
+
+        h2 {
+            display: flex;
+            font-size: 24px;
+            height: 100%;
+            align-items: center;
+        }
+    }
+}
+
+.open-sidebar {
+    position: absolute;
+
+    top: 16px;
+    left: 16px;
+    width: 54px;
+    height: 54px;
+    box-sizing: border-box;
+
+    margin: 0px;
+    padding: 12px;
+
+    background: none;
+
+    color: var(--text-muted);
+
+    border: none;
+
+    border-radius: 100%;
+
+    &:hover {
+        background: var(--bg);
+    }
+}
+
+@media (max-width: 1080px) {
+    .sidebar {
+        width: 100vw;
+    }
+}
