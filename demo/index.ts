@@ -66,8 +66,8 @@ app.post("/query", async (req: Request, res: Response) => {
         },
         body: JSON.stringify(data)
     })
-        .then(res => { console.log(res) })
-        .then(json => { res.send(json) });
+        .then(res => { return res.json() })
+        .then(json => { res.send(JSON.stringify(json)) });
 });
 
 app.get("/devices", async (req: Request, res: Response) => {

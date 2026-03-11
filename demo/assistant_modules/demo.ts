@@ -84,7 +84,7 @@ export class Module extends ModuleBase {
             // Turn on light
             {
                 callback: async (entityName: string, entityId: string, args: Record<string, string>) => {
-                    updateEntity(entityId, "on", true, moduleData)
+                    this.updateEntity(entityId, "on", true, moduleData)
                     return `Turned on ${entityName}!`;
                 },
                 args: {
@@ -96,7 +96,7 @@ export class Module extends ModuleBase {
             // Turn off light
             {
                 callback: async (entityName: string, entityId: string, args: Record<string, string>) => {
-                    updateEntity(entityId, "on", false, moduleData)
+                    this.updateEntity(entityId, "on", false, moduleData)
                     return `Turned off ${entityName}!`;
                 },
                 args: {
@@ -110,7 +110,7 @@ export class Module extends ModuleBase {
                 callback: async (entityName: string, entityId: string, args: Record<string, string>) => {
                     const color = colorMap[args.color];
                     if (color) {
-                        updateEntity(entityId, "color", color, moduleData)
+                        this.updateEntity(entityId, "color", color, moduleData)
                         return `Set ${entityName} color to ${args.color}!`;
                     }
                     return "Sorry! I don't know that color!";
