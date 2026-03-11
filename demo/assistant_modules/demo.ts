@@ -67,7 +67,6 @@ export class Module extends ModuleBase {
         let endRequest = false;
 
         const moduleData = db.getModuleData('demo.ts') as ModuleParams;
-        const availableDevices = await this.fetchDevices(moduleData);
 
         const colorMap: Record<string, number[]> = {
             "red": [255, 0, 0],
@@ -85,7 +84,7 @@ export class Module extends ModuleBase {
             // Turn on light
             {
                 callback: async (entityName: string, entityId: string, args: Record<string, string>) => {
-                    updateEntity(entityId, "on", true, moduleParams)
+                    updateEntity(entityId, "on", true, moduleData)
                     return `Turned on ${entityName}!`;
                 },
                 args: {
@@ -97,7 +96,7 @@ export class Module extends ModuleBase {
             // Turn off light
             {
                 callback: async (entityName: string, entityId: string, args: Record<string, string>) => {
-                    updateEntity(entityId, "on", false, moduleParams)
+                    updateEntity(entityId, "on", false, moduleData)
                     return `Turned off ${entityName}!`;
                 },
                 args: {
@@ -111,7 +110,7 @@ export class Module extends ModuleBase {
                 callback: async (entityName: string, entityId: string, args: Record<string, string>) => {
                     const color = colorMap[args.color];
                     if (color) {
-                        updateEntity(entityId, "color", color, moduleParams)
+                        updateEntity(entityId, "color", color, moduleData)
                         return `Set ${entityName} color to ${args.color}!`;
                     }
                     return "Sorry! I don't know that color!";
@@ -123,10 +122,10 @@ export class Module extends ModuleBase {
             } as Action,
         ]
 
-        actions.forEach(action => {
+        actions.forEach(async action => {
             const actionResult = parseCommand(action.args.shape, query, action.args.keyBlacklist);
             if ( actionResult.matched ) {
-                const devices: Device[] = await this.fetchDevices();
+                const devices: Device[] = await this.fetchDevices(moduleData);
                 const entityID = undefined;
                 const entityName = undefined;
 
