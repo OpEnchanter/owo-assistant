@@ -77,6 +77,7 @@ app.get("/devices", async (req: Request, res: Response) => {
 app.post("/updateDevice", async (req: Request, res: Response) => {
     const data = req.body as DeviceUpdate;
     devices[data.id][data.field] = data.newValue;
+    console.log("Updating device!");
     res.sendStatus(200);
 });
 

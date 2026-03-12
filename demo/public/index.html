@@ -7,6 +7,11 @@
         <link rel="stylesheet" href="/demo.css">
     </head>
     <body>
+        <div class="welcomeModal">
+            <h1>owo whats dis?</h1>
+            <p>Hi! Welcome to the demo for my project, OwO Assistant! The complete version of this app can do a lot more than this little demo such as full Home Assistant integration and allowing for any other integration to be made and implemented (see the readme on <a href="https://github.com/OpEnchanter/owo-assistant">GitHub</a>), but the demo is limited to just being able to control some (fake) lights. Try asking the assistant "turn off living room lamp" or "set living room lamp color to red"! Note, all the device states in this demo are on one server, so the lights might change from other people using the app.</p>
+            <button class="closeModal">Ok!</button>
+        </div>
         <button class="open-sidebar">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><title>menu</title><path fill="#dfdfdf" d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z" /></svg>
         </button>
@@ -29,22 +34,12 @@
         </div>
         <script src="https://cdn.jsdelivr.net/npm/marked/lib/marked.umd.js"></script>
         <script>
-            const sidebar = document.querySelector(".sidebar");
-            document.querySelector(".open-sidebar").addEventListener('click', (e) => {
-                sidebar.style.transform = "translateX(0%)";
-            });
-
-            document.querySelector(".close").addEventListener('click', (e) => {
-                sidebar.style.transform = "translateX(-100%)";
-            });
-
             const devices = document.querySelector(".devices");
-
-            document.addEventListener('DOMContentLoaded', async (e) => {
+            async function loadDevices() {
                 await fetch("/devices")
                     .then(res => { return res.json() })
                     .then(data => {
-                        console.log(data);
+                        devices.innerHTML = '';
                         Object.keys(data).forEach(deviceId => {
                             devices.appendChild((() => {
                                 const elem = document.createElement("div");
@@ -79,7 +74,27 @@
                                 return elem;
                             })())
                         });
-                    });
+                });
+            }
+
+            
+            const welcomeModal = document.querySelector(".welcomeModal");
+
+            document.querySelector(".closeModal").addEventListener('click', (e) => {
+                welcomeModal.style.transform = "translate(-50%, calc(-50% - 100vh))";
+            });
+
+            const sidebar = document.querySelector(".sidebar");
+            document.querySelector(".open-sidebar").addEventListener('click', (e) => {
+                sidebar.style.transform = "translateX(0%)";
+            });
+
+            document.querySelector(".close").addEventListener('click', (e) => {
+                sidebar.style.transform = "translateX(-100%)";
+            });
+
+            document.addEventListener('DOMContentLoaded', async (e) => {
+                loadDevices();
             });
 
             const query = document.getElementById("query");
@@ -151,6 +166,8 @@
                         });
                 }
             });
+
+            setInterval(loadDevices, 15);
         </script>
 
     </body>

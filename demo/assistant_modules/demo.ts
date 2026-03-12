@@ -34,16 +34,15 @@ export class Module extends ModuleBase {
     constructor (db: OwoDB) { super(db) }
 
     public override exposedParams(): string {
-        return ['apiKey', 'demoUrl'];
+        return ['demoUrl'];
     }
 
-    private async updateEntity(id: string, field: string, newValue: string, moduleParams: ModuleParams): Promise<number> {
-        if (moduleParams.apiKey && moduleParams.demoUrl) {
+    private async updateEntity(id: string, field: string, newValue: any, moduleParams: ModuleParams) {
+        if (moduleParams.demoUrl) {
             await fetch(`${moduleParams.demoUrl}/updateDevice`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "x-api-key": moduleParams.apiKey
                 },
                 body: JSON.stringify({
                     id: id,
@@ -51,9 +50,6 @@ export class Module extends ModuleBase {
                     newValue: newValue
                 })
             });
-            return 200;
-        } else {
-            return 404;
         }
     }
 
@@ -111,6 +107,7 @@ export class Module extends ModuleBase {
                     const color = colorMap[args.color];
                     if (color) {
                         this.updateEntity(entityId, "color", color, moduleData)
+                        this.updateEntity(entityId, "on", true, moduleData)
                         return `Set ${entityName} color to ${args.color}!`;
                     }
                     return "Sorry! I don't know that color!";
@@ -122,7 +119,8 @@ export class Module extends ModuleBase {
             } as Action,
         ]
 
-        actions.forEach(async action => {
+
+        for (const action of actions) {
             const actionResult = parseCommand(action.args.shape, query, action.args.keyBlacklist);
             if ( actionResult.matched ) {
                 const devices: Device[] = await this.fetchDevices(moduleData);
@@ -130,20 +128,19 @@ export class Module extends ModuleBase {
                 let entityName = undefined;
 
                 Object.keys(devices).forEach(deviceId => {
-                    if (devices[deviceId].name.toLowerCase() == actionResult.args[action.args.shape.prefix]) {
+                    if (devices[deviceId].name.toLowerCase() == actionResult.args[action.args.shape.prefix].toLowerCase()) {
                         entityID = deviceId;
                         entityName = devices[deviceId].name;
                     }
                 });
 
-                if (entityID) {
+                if (entityID != undefined) {
                     response = await action.callback(entityName, entityID, actionResult.args);
-                    if (response) {
-                        endRequest = true;
-                    }
+                    endRequest = true;
                 }
+
             }
-        });
+        }
 
         return {response:response, endRequest:endRequest} as ModuleResult;
     }

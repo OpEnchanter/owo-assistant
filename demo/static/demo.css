@@ -126,6 +126,75 @@
     }
 }
 
+.welcomeModal {
+    display: flex;
+    box-sizing: border-box;
+    position: absolute;
+    width: 55vw;
+    height: 35vh;
+    
+    max-height: 550px;
+    min-height: 450px;
+
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    padding: 12px;
+    border-radius: 12px;
+
+    background: var(--bg);
+    border: 1px solid var(--border);
+
+    z-index: 2000;
+
+    flex-direction: column;
+
+    transition: transform 150ms ease-in;
+
+    h1 {
+        color: var(--text-color);
+        margin: 0px;
+        margin-bottom: 12px;
+        padding: 0px;
+        height: 24px;
+    }
+
+    .closeModal {
+        padding: 4px;
+        padding-left: 24px;
+        padding-right: 24px;
+
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+
+        background: linear-gradient(45deg, #ffbfbf, #bfffbf, #bfbfff);
+
+        &:hover {
+            animation: wiggle 750ms linear infinite;
+        }
+    }   
+}
+
+@keyframes wiggle {
+    0% {
+        transform: rotateZ(0deg);
+    }
+
+    25% {
+        transform: rotateZ(4deg);
+    }
+
+    75% {
+        transform: rotateZ(-4deg);
+    }
+
+    100% {
+        transform: rotateZ(0deg);
+    }
+}
+
 @media (max-width: 1080px) {
     .sidebar {
         width: 100vw;
