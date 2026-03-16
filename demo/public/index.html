@@ -9,7 +9,7 @@
     <body>
         <div class="welcomeModal">
             <h1>owo whats dis?</h1>
-            <p>Hi! Welcome to the demo for my project, OwO Assistant! The complete version of this app can do a lot more than this little demo such as full Home Assistant integration and allowing for any other integration to be made and implemented (see the readme on <a href="https://github.com/OpEnchanter/owo-assistant">GitHub</a>), but the demo is limited to just being able to control some (fake) lights. Try asking the assistant "turn off living room lamp" or "set living room lamp color to red"! Note, all the device states in this demo are on one server, so the lights might change from other people using the app.</p>
+            <p>Hi! Welcome to the demo for my project, OwO Assistant! The complete version of this app can do a lot more than this little demo such as full Home Assistant integration and allowing for any other integration to be made and implemented (see the readme on <a href="https://github.com/OpEnchanter/owo-assistant">GitHub</a>), but the demo is limited to just being able to control some (fake) lights (located in the sidebar you can access by clicking the menu button). Try asking the assistant "turn off living room lamp" or "set living room lamp color to red"! Note, all the device states in this demo are on one server, so the lights might change from other people using the app.</p>
             <button class="closeModal">Ok!</button>
         </div>
         <button class="open-sidebar">
@@ -163,11 +163,10 @@
                                 assistantMessage.style.transform = "scale(1) translateY(0)";
                             }, 15);
                             Prism.highlightAll();
+                            loadDevices();
                         });
                 }
             });
-
-            setInterval(loadDevices, 15);
         </script>
 
     </body>
