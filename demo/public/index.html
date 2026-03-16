@@ -147,6 +147,7 @@
                     })
                         .then(res => { return res.json() })
                         .then(data => {
+                            loadDevices();
                             sessionID = data.sessionID;
                             const assistantMessage = document.createElement("div");
                             assistantMessage.className = "assistantMessage";
@@ -163,7 +164,6 @@
                                 assistantMessage.style.transform = "scale(1) translateY(0)";
                             }, 15);
                             Prism.highlightAll();
-                            loadDevices();
                         });
                 }
             });
