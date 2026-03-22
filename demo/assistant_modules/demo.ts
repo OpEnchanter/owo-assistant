@@ -85,7 +85,7 @@ export class Module extends ModuleBase {
                 },
                 args: {
                     shape: { prefix: "turn on", args: [] } as CommandShape,
-                    keyBlacklist: [ " please", " the ", " to ", " it " ]
+                    keyBlacklist: [ "please", "the", "to", "it" ]
                 }
             } as Action,
 
@@ -97,7 +97,7 @@ export class Module extends ModuleBase {
                 },
                 args: {
                     shape: { prefix: "turn off", args: [] } as CommandShape,
-                    keyBlacklist: [ " please", " the ", " to ", " it "]
+                    keyBlacklist: [ "please", "the", "to", "it"]
                 }
             } as Action,
 
@@ -114,7 +114,7 @@ export class Module extends ModuleBase {
                 },
                 args: {
                     shape: { prefix: "set", args: [ "color" ] } as CommandShape,
-                    keyBlacklist: [ " please", " the ", " to ", " it " ]
+                    keyBlacklist: [ "please", "the", "to", "it" ]
                 }
             } as Action,
         ]

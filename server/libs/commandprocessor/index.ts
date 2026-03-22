@@ -12,7 +12,10 @@ export function parseCommand(shape: CommandShape, query: string, wordBlacklist?:
     let result = { matched: false, args: {} } as CommandResult;
     
     let queryLowerCase = query.replaceAll(/\p{P}/gu, '').toLowerCase();
-    if ( wordBlacklist ) { queryLowerCase = queryLowerCase.replaceAll(new RegExp(wordBlacklist.join('|'), 'gi'), ''); }
+    if ( wordBlacklist ) {
+        const escaped = wordBlacklist.map(w => w.trim()).filter(Boolean).map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+        queryLowerCase = queryLowerCase.replace(new RegExp(`\\b(?:${escaped.join('|')})\\b`, 'gi'), ''); 
+    }
     const tokenized = queryLowerCase.split(" ");
 
     const tokenizedPrefix = shape.prefix.split(" ");
