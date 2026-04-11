@@ -39,6 +39,7 @@ git clone https://github.com/OpEnchanter/owo-assistant.git; cd owo-assistant/ser
 ```
 
 ## Client Installation
+> [!NOTE] The android APK most likely will only work on the latest version of android if you are unable to install it just use the website.
 The prebuilt `.apk` binary for the app is in [releases](https://github.com/OpEnchanter/owo-assistant/releases), from which you can download it and load it onto your phone.
 
 **Post install steps**
