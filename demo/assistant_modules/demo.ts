@@ -76,12 +76,19 @@ export class Module extends ModuleBase {
             "white": [255, 255, 255]
         }
 
+        let lightState = { color: [0,0,0], on: false} as LightDevice;
+
         const actions: Action[] = [
             // Turn on light
             {
                 callback: async (entityName: string, entityId: string, args: Record<string, string>) => {
-                    this.updateEntity(entityId, "on", true, moduleData)
-                    return `Turned on ${entityName}!`;
+                    if (!lightState.on) {
+                        this.updateEntity(entityId, "on", true, moduleData)
+                        return `Turned on ${entityName}!`;
+                    } else {
+                        return `${entityName} is already on!`;
+                    }
+                    
                 },
                 args: {
                     shape: { prefix: "turn on", args: [] } as CommandShape,
@@ -92,8 +99,12 @@ export class Module extends ModuleBase {
             // Turn off light
             {
                 callback: async (entityName: string, entityId: string, args: Record<string, string>) => {
-                    this.updateEntity(entityId, "on", false, moduleData)
-                    return `Turned off ${entityName}!`;
+                    if (lightState.on) {
+                        this.updateEntity(entityId, "on", false, moduleData)
+                        return `Turned off ${entityName}!`;
+                    } else {
+                        return `${entityName} is already off!`;
+                    }
                 },
                 args: {
                     shape: { prefix: "turn off", args: [] } as CommandShape,
@@ -131,6 +142,7 @@ export class Module extends ModuleBase {
                     if (devices[deviceId].name.toLowerCase() == actionResult.args[action.args.shape.prefix].toLowerCase()) {
                         entityID = deviceId;
                         entityName = devices[deviceId].name;
+                        lightState = (devices[deviceId] as LightDevice);
                     }
                 });
 
